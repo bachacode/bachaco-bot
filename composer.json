@@ -1,0 +1,29 @@
+{
+    "name": "bachacode/bachaco-bot",
+    "description": "PHP Discord Bot with fun interactions",
+    "type": "project",
+    "require": {
+        "team-reflex/discord-php": "^7.3",
+        "guzzlehttp/guzzle": "^7.5",
+        "vlucas/phpdotenv": "5.4.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bachacode\\BachacoBot\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Cristhian Flores",
+            "email": "bachacode@users.noreply.github.com"
+        }
+    ],
+    "autoload-dev": {
+        "psr-4": {
+            "Bachacode\\BachacoBot\\Tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
