@@ -1,6 +1,6 @@
 <?php
 
-namespace Bachacode\BachacoBot;
+namespace Botchaco;
 // Check if bot
         if($message->author->bot) return;
 

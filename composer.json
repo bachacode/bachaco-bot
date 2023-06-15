@@ -9,7 +9,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Bachacode\\BachacoBot\\": "src/"
+            "Botchaco\\": "src/"
         }
     },
     "authors": [
