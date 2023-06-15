@@ -5,7 +5,8 @@
     "require": {
         "team-reflex/discord-php": "^7.3",
         "guzzlehttp/guzzle": "^7.5",
-        "vlucas/phpdotenv": "5.4.1"
+        "vlucas/phpdotenv": "5.4.1",
+        "php-ffmpeg/php-ffmpeg": "^1.1"
     },
     "autoload": {
         "psr-4": {

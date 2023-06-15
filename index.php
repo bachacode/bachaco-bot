@@ -1,15 +1,14 @@
 <?php
-echo __DIR__ . '/vendor/autoload.php';
 include __DIR__ . '/vendor/autoload.php';
 use Discord\Discord;
 use Discord\WebSockets\Event;
 use Discord\Parts\Channel\Message;
 use Botchaco\Replies;
 use Discord\Parts\Embed\Embed;
+use Discord\Voice\VoiceClient;
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-
 $key = $_ENV['APP_KEY'];
 
 
@@ -54,8 +53,16 @@ $discord ->on('ready', function(Discord $discord) use ($replies)
 
         if($message->content == 'chaco!m'){
             $channel = $discord->getChannel(603201649099669528);
-            $discord->joinVoiceChannel($channel);
-            $voiceClient = $discord->getVoiceClient($message->guild_id);
+            $discord->joinVoiceChannel($channel)->then(function (VoiceClient $voice) {
+                $song = fopen('smell.mp3', 'r');
+                $voice->playFile($song)->then(function () {
+                    echo 'funciono';
+                });
+            });
+            // $voiceClient = $discord->getVoiceClient(603201649099669524);
+            // var_dump($voiceClient);
+            // $song = file_get_contents('smell.mp3');
+            // $voiceClient->playFile($song);
         }
 
         if($message->content == 'chaco!profile') {
@@ -71,4 +78,4 @@ $discord ->on('ready', function(Discord $discord) use ($replies)
 
 });
 
-$discord -> run();
+$discord->run();
