@@ -1,8 +1,8 @@
-const { SlashCommandBuilder } = require('discord.js')
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder().setName('gatoexit').setDescription('Replies with GatoPong!'),
-  async execute (interaction) {
-    await interaction.reply('GatoPong!')
+  async execute(interaction) {
+    await interaction.reply('GatoPong!');
   }
-}
+};
