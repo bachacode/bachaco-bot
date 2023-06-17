@@ -1,32 +1,14 @@
+require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { Player } = require('discord-player');
 const Replies = require('./Replies/Replies');
-require('dotenv').config();
+const funnyReplies = require('./Replies/FunnyReplies');
+const funnyReactions = require('./Replies/FunnyReactions');
 
 const token = process.env.token;
-const funnyReplies = [
-  { request: 'marico', response: 'eres' },
-  { request: 'verga', response: 'comes' },
-  { request: 'gatoc', response: '<:gatoC:957421664738639872> 🍷' },
-  {
-    request: 'boku no hero',
-    response:
-      'https://cdn.discordapp.com/attachments/801954893437861918/958565875961716736/unknown.png'
-  },
-  {
-    request: 'mediocre',
-    response:
-      'https://cdn.discordapp.com/attachments/801954893437861918/958565875961716736/unknown.png'
-  },
-  { request: 'women', response: '☕' },
-  { request: 'contexto', response: 'https://i.ytimg.com/vi/x6aBFSJHslE/hqdefault.jpg' },
-  { request: 'litio', response: '🐒' }
-];
-const funnyReactions = [
-  { request: '<:gatoC:957421664738639872>', response: ':gatoC:957421664738639872' }
-];
+
 const replies = new Replies(funnyReplies, funnyReactions);
 
 // Create a new client instance
