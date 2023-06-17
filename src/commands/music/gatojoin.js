@@ -4,12 +4,14 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('gatojoin')
     .setDescription('Makes the bot join your current voice!')
-    .addChannelOption((option) => option
-      .setName('channel')
-      .setDescription('The channel to join')
-      .setRequired(true)
-      .addChannelTypes(ChannelType.GuildVoice)
-    ).toJSON(),
+    .addChannelOption((option) =>
+      option
+        .setName('channel')
+        .setDescription('The channel to join')
+        .setRequired(true)
+        .addChannelTypes(ChannelType.GuildVoice)
+    )
+    .toJSON(),
   async execute (interaction) {
     const voiceChannel = interaction.options.getChannel('channel')
     const voiceConnection = joinVoiceChannel({
