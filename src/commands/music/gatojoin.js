@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, ChannelType } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { SlashCommandBuilder, ChannelType } = require('discord.js')
+const { joinVoiceChannel } = require('@discordjs/voice')
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('gatojoin')
@@ -12,13 +12,13 @@ module.exports = {
         .addChannelTypes(ChannelType.GuildVoice)
     )
     .toJSON(),
-  async execute(interaction) {
-    const voiceChannel = interaction.options.getChannel('channel');
+  async execute (interaction) {
+    const voiceChannel = interaction.options.getChannel('channel')
     const voiceConnection = joinVoiceChannel({
       channelId: voiceChannel.id,
       guildId: interaction.guildId,
       adapterCreator: interaction.guild.voiceAdapterCreator
-    });
-    voiceConnection;
+    })
+    voiceConnection
   }
-};
+}
