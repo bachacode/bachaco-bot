@@ -28,6 +28,7 @@ const funnyReactions = [
   { request: '<:gatoC:957421664738639872>', response: ':gatoC:957421664738639872' }
 ];
 const replies = new Replies(funnyReplies, funnyReactions);
+
 // Create a new client instance
 const client = new Client({
   intents: [
@@ -72,6 +73,7 @@ client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
+// Slash Command Handling
 client.on(Events.InteractionCreate, async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
@@ -100,11 +102,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
 });
 
+// Funny Replies Interactions
 client.on(Events.MessageCreate, async (message) => {
   console.log(`${message.author.username}: ${message.content}`);
   if (message.author.bot === true) return;
+  replies.messages.push({ content: message.content, user: message.author.username });
   replies.replyToMsg(message);
   replies.reactToMsg(message);
+  replies.chainThree(message);
 });
 
 // Log in to Discord with your client's token
