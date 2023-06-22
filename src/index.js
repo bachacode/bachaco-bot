@@ -6,10 +6,10 @@ const { Player } = require('discord-player');
 const Replies = require('./Replies/Replies');
 const funnyReplies = require('./Replies/FunnyReplies');
 const funnyReactions = require('./Replies/FunnyReactions');
-
+const funnyMessages = require('./Replies/FunnyMessages');
 const token = process.env.token;
 
-const replies = new Replies(funnyReplies, funnyReactions);
+const replies = new Replies(funnyReplies, funnyReactions, funnyMessages);
 
 // Create a new client instance
 const client = new Client({
@@ -91,6 +91,7 @@ client.on(Events.MessageCreate, async (message) => {
   replies.messages.push({ content: message.content, user: message.author.username });
   replies.replyToMsg(message);
   replies.reactToMsg(message);
+  replies.messageToMsg(message);
   replies.chainThree(message);
 });
 

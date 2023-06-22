@@ -1,6 +1,7 @@
 class Replies {
-  constructor (replies = [], reactions = [], messages = []) {
+  constructor (replies = [], reactions = [], funnyMessages = [], messages = []) {
     this.funnyReplies = replies;
+    this.funnyMessages = funnyMessages;
     this.funnyReactions = reactions;
     this.messages = messages;
   }
@@ -14,6 +15,15 @@ class Replies {
     });
   }
 
+  messageToMsg (message) {
+    const lowercaseMessage = message.content.toLowerCase();
+    this.funnyMessages.forEach((reply) => {
+      if (lowercaseMessage === reply.request) {
+        message.channel.send(reply.response);
+      }
+    });
+  }
+
   reactToMsg (message) {
     this.funnyReactions.forEach((reaction) => {
       if (message.content === reaction.request) {
@@ -23,20 +33,23 @@ class Replies {
   }
 
   chainThree (message) {
-    let allThreeEqual = 0;
+    let allThreeEqual = false;
     const lastMessage = this.messages[this.messages.length - 1].content;
     if (this.messages.length >= 3) {
-      allThreeEqual = this.messages
-        .slice(Math.max(this.messages.length - 3, 1))
-        .every((message) => {
-          if (
-            message.content === this.messages[0].content &&
-            message.author !== this.messages[0].user &&
-            message.author !== this.messages[1].user
-          ) {
-            return true;
-          } else { return false; }
-        });
+      const lastThree = this.messages.slice(-3);
+      allThreeEqual = lastThree.every((message) => {
+        if (
+          message.content === lastThree[0].content &&
+          message.content === lastThree[1].content &&
+          message.author !== lastThree[0].user &&
+          message.author !== lastThree[1].user
+        ) {
+          this.messages = [];
+          return true;
+        } else {
+          return false;
+        }
+      });
     }
     if (allThreeEqual) {
       message.channel.send(lastMessage);
