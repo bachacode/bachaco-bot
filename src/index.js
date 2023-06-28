@@ -86,8 +86,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 // Funny Replies Interactions
 client.on(Events.MessageCreate, async (message) => {
-  console.log(`${message.author.username}: ${message.content}`);
   if (message.author.bot === true) return;
+  console.log(`${message.author.username}: ${message.content}`);
   replies.messages.push({ content: message.content, user: message.author.username });
   replies.replyToMsg(message);
   replies.reactToMsg(message);

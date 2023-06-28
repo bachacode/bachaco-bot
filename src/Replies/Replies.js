@@ -37,12 +37,12 @@ class Replies {
     const lastMessage = this.messages[this.messages.length - 1].content;
     if (this.messages.length >= 3) {
       const lastThree = this.messages.slice(-3);
-      allThreeEqual = lastThree.every((message) => {
+      allThreeEqual = lastThree.every((savedMessage) => {
         if (
           message.content === lastThree[0].content &&
           message.content === lastThree[1].content &&
-          message.author !== lastThree[0].user &&
-          message.author !== lastThree[1].user
+          message.author.username !== lastThree[0].user &&
+          message.author.username !== lastThree[1].user
         ) {
           this.messages = [];
           return true;

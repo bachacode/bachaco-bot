@@ -63,7 +63,6 @@ module.exports = {
         requestedBy: interaction.user,
         searchEngine: QueryType.YOUTUBE_VIDEO
       });
-      console.log(result);
       // finish if no tracks were found
       if (result.tracks.length === 0) return interaction.reply('No results');
 
