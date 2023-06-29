@@ -1,24 +1,23 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { useQueue } = require('discord-player');
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('gatoskip')
-    .setDescription('Skips the current song!'),
-  async execute ({ client, interaction }) {
-    const queue = client.player.nodes.get(interaction.guild);
+    .setDescription('gatoc se salta la canción actual.'),
+  async execute ({ interaction }) {
+    // Revisa si hay una queue activa.
+    const queue = useQueue(interaction.guild.id);
+    if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    
+    const currentSong = queue.currentTrack;
 
-    if (!queue) {
-      await interaction.reply('No hay nada sonando elmio.');
-      return;
-    }
-    const currentSong = queue.current;
-
-    queue.skip();
+    queue.node.skip();
 
     await interaction.reply({
       embeds: [
-        new EmbedBuilder().setDescription(`Skipped **${currentSong.title}**`)
-          .setThumbnail(currentSong.thumbnail)
+        new EmbedBuilder().setDescription(`Se ha saltado **${currentSong.title}**`)
+          .setThumbnail(currentSong.thumbnail).setColor('DarkAqua')
       ]
     });
   }
