@@ -36,6 +36,8 @@ module.exports = {
             client: interaction.guild.members.me,
             requestedBy: interaction.user
           },
+          leaveOnEndCooldown: 300000,
+          leaveOnEmptyCooldown: 30000
         }
       });
       await interaction.editReply({
