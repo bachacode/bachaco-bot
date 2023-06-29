@@ -42,17 +42,22 @@ for (const folder of commandFolders) {
   }
 }
 
-client.player = new Player(client, {
-  ytdlOptions: {
-    quality: 'highestaudio',
-    highWaterMark: 1 << 25
-  }
-});
-
 // When the client is ready, run this code (only once)
 // We use 'c' for the event parameter to keep it separate from the already defined 'client'
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+});
+
+// Create a new player instance
+const player = new Player(client);
+
+// This method will load all the extractors from the @discord-player/extractor package
+player.extractors.loadDefault();
+
+// this event is emitted whenever discord-player starts to play a track
+player.events.on('playerStart', (queue, track) => {
+  // we will later define queue.metadata object while creating the queue
+  queue.metadata.channel.send(`Esta sonando **${track.title}**`);
 });
 
 // Slash Command Handling
