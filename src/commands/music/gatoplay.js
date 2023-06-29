@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useMainPlayer, useQueue } = require('discord-player');
 
 module.exports = {
@@ -35,14 +35,19 @@ module.exports = {
             channel: interaction.channel,
             client: interaction.guild.members.me,
             requestedBy: interaction.user
-          }
+          },
         }
       });
-      await interaction.editReply(`🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`);
+      await interaction.editReply({
+        embeds: [
+          new EmbedBuilder().setDescription(`🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`)
+          .setThumbnail(result.tracks[0].thumbnail).setColor('DarkAqua')
+        ]
+      });
     } catch (error) {
       console.error(error);
       await interaction.editReply({
-        content: '¡Ha ocurrido un error!\n' + error
+        content: '¡Ha ocurrido un error!\n'
       });
     }
   }
