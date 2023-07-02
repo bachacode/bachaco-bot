@@ -55,5 +55,12 @@ class Replies {
       message.channel.send(lastMessage);
     }
   }
+
+  checkMessage(message) {
+    this.replyToMsg(message);
+    this.reactToMsg(message);
+    this.messageToMsg(message);
+    this.chainThree(message);
+  }
 }
 module.exports = Replies;
