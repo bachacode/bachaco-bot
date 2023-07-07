@@ -95,6 +95,15 @@ client.on(Events.MessageCreate, async (message) => {
   console.log(`${message.author.username}: ${message.content}`);
   replies.messages.push({ content: message.content, user: message.author.username });
   replies.checkMessage(message);
+  if(message.content.includes('twitter.com')){
+    let originalString = message.content;
+    let pos = originalString.lastIndexOf('twitter.com');
+    let replace = 'vx'
+    let newString = originalString.slice(0, pos) + replace + originalString.slice(pos);
+    message.delete().then(() => {
+      message.channel.send(newString);
+    })
+  }
 });
 
 // Log in to Discord with your client's token
