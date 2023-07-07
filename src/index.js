@@ -97,6 +97,7 @@ client.on(Events.MessageCreate, async (message) => {
   replies.checkMessage(message);
   if(message.content.includes('twitter.com')){
     let originalString = message.content;
+    
     let pos = originalString.lastIndexOf('twitter.com');
     let replace = 'vx'
     let newString = originalString.slice(0, pos) + replace + originalString.slice(pos);
