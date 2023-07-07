@@ -1,7 +1,7 @@
 require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
-const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
+const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const { Player } = require('discord-player');
 const Replies = require('./Replies/Replies');
 const funnyReplies = require('./Replies/FunnyReplies');
@@ -17,7 +17,8 @@ const client = new Client({
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.MessageContent
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers
   ]
 });
 
@@ -105,6 +106,42 @@ client.on(Events.MessageCreate, async (message) => {
     })
   }
 });
+
+// Mensaje de bienvenida
+client.on(Events.GuildMemberAdd, async (member) => {
+  let channel = member.client.channels.cache.get('603201649099669526')
+  let { user } = member;
+  member.roles.add('603340605774626871');
+  let name = `<@${user.id}>`;
+
+  let embed = new EmbedBuilder()
+    .setColor('Aqua')
+    .setTitle('qlq <:gatoC:957421664738639872> 🍷')
+    .setDescription(`${name} acaba de cometer el error mas grande de su vida entrando a esta tierra profana.`)
+    channel.send({
+      embeds:[ 
+        embed
+      ]
+    });
+})
+
+// Mensaje de despedida
+client.on(Events.GuildMemberRemove, async (member) => {
+  let channel = member.client.channels.cache.get('603201649099669526')
+  let { user } = member;
+
+  let name = `<@${user.id}>`;
+
+  let embed = new EmbedBuilder()
+    .setColor('Aqua')
+    .setTitle('c le fue la luz <:sadcheems:869742943425151087>')
+    .setDescription(`${name} no aguanto la pela.`)
+    channel.send({
+      embeds:[ 
+        embed
+      ]
+    });
+})
 
 // Log in to Discord with your client's token
 client.login(token);
