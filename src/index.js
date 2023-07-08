@@ -7,10 +7,9 @@ const Replies = require('./Replies/Replies');
 const funnyReplies = require('./Replies/FunnyReplies');
 const funnyReactions = require('./Replies/FunnyReactions');
 const funnyMessages = require('./Replies/FunnyMessages');
-const token = process.env.token;
-
+const token = process.env.TOKEN;
 const replies = new Replies(funnyReplies, funnyReactions, funnyMessages);
-
+const { getRandomInt } = require('./helpers/getRandomInt');
 // Create a new client instance
 const client = new Client({
   intents: [
@@ -116,10 +115,10 @@ client.on(Events.GuildMemberAdd, async (member) => {
   let { user } = member;
   member.roles.add('603340605774626871');
   let name = `<@${user.id}>`;
-
   let embed = new EmbedBuilder()
     .setColor('Aqua')
     .setTitle('qlq <:gatoC:957421664738639872> 🍷')
+    .setImage('https://media.tenor.com/eH-RoS91Q1gAAAAC/cat.gif')
     .setDescription(`${name} acaba de cometer el error mas grande de su vida entrando a esta tierra profana.`)
     channel.send({
       embeds:[ 
@@ -134,11 +133,20 @@ client.on(Events.GuildMemberRemove, async (member) => {
   let { user } = member;
 
   let name = `<@${user.id}>`;
-
-  let embed = new EmbedBuilder()
-    .setColor('Aqua')
-    .setTitle('c le fue la luz <:sadcheems:869742943425151087>')
+  let rand = getRandomInt(2);
+  let embed = new EmbedBuilder();
+  if(rand === 1) {
+    embed.setColor('Aqua')
+    .setTitle('c lo acomodaron por las costillas <:sadcheems:869742943425151087>')
+    .setImage('https://media.tenor.com/ww56Kix_vM8AAAAC/seloacomodoporlascostillas.gif')
     .setDescription(`${name} no aguanto la pela.`)
+  } else if (rand === 0) {
+    embed.setColor('Aqua')
+    .setTitle('c le fue la luz <:sadcheems:869742943425151087>')
+    .setImage('https://media.tenor.com/vHMD9o7RmfYAAAAC/snake-salute.gif')
+    .setDescription(`${name} no aguanto la pela.`)
+  }
+  
     channel.send({
       embeds:[ 
         embed
