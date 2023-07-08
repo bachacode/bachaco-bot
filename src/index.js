@@ -101,8 +101,11 @@ client.on(Events.MessageCreate, async (message) => {
     let pos = originalString.lastIndexOf('twitter.com');
     let replace = 'vx'
     let newString = originalString.slice(0, pos) + replace + originalString.slice(pos);
-    message.delete().then(() => {
-      message.channel.send(newString);
+    let authorMsg = ` by <@${message.author.id}>`
+    message.delete().then((message) => {
+      message.channel.send(newString).then((message) => {
+        message.channel.send({ content: authorMsg, allowedMentions: { users: [] } });
+      });
     })
   }
 });
