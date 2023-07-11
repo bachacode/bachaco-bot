@@ -3,7 +3,7 @@ const { useMainPlayer, useQueue } = require('discord-player');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('gatoplay')
+    .setName('gaplay')
     .setDescription('gatoc reproduce una canción.')
     .addStringOption((option) =>
       option.setName('query').setDescription('la URL de la canción.').setRequired(true)
