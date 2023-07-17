@@ -20,7 +20,8 @@ module.exports = {
       ]
     };
 
-    const messageSent = await interaction.channel.send(embeddedMessage);
+    await interaction.reply(embeddedMessage);
+    const messageSent = await interaction.fetchReply();
     await messageSent.react('<:gatoC:957421664738639872>');
     await messageSent.react('<:tobi:716441157458198579>');
   }
