@@ -21,17 +21,45 @@ module.exports = {
     if (queue && queue.channel !== channel) return interaction.reply('Ya estoy en otro canal de voz.');
 
     let query = interaction.options.getString('query', true);
-
+    let queryIndex = null
+    // Limpia el query
     if(query.includes('&list=') && query.includes('watch?v=')){
       query = query.replace(/watch\?v=[^&]+/, "playlist");
       query = query.replace(/playlist&/, "playlist?");
+      if(query.includes('&index=')) {
+        queryIndex = query.match(/&index=(\d+)/)[1];
+        query = query.replace(/&index=\d+/, "");
+      }
     }
 
     await interaction.deferReply();
 
     const result = await player.search(query);
-
-    if (!result?.tracks.length) return interaction.editReply(`No se encontró la canción 💀💀💀.`);
+    // Si tiene index coloca de primero la canción del index
+    if(result.tracks.length > 0 && query.includes('?list=') && queryIndex != null) {
+      for (let i = 0; i < queryIndex - 1; i++) {
+        result.tracks.shift()
+      }
+    }
+    let nsfwCounter = 0;
+    // Si la playlist tiene canciones NSFW, las elimina
+    result.tracks = result.tracks.filter((track => {
+      if(track.metadata.nsfw == false){
+        return track
+      } else {
+        nsfwCounter++;
+      }
+    }));
+    // Guard Statements
+    if(!result?.tracks.length && query.includes('?list=')) {
+      return interaction.editReply(`¡No se pueden reproducir mix generados por youtube 💀💀💀`);
+    }
+    if(result.playlist == null && result.tracks[0].metadata.nsfw) {
+      return interaction.editReply(`La canción es NSFW 💀💀💀`);
+    }
+    if (!result?.tracks.length) {
+      return interaction.editReply(`No se encontró la canción 💀💀💀.`);
+    }
 
     try {
         await player.play(channel, result, {
@@ -45,12 +73,22 @@ module.exports = {
             leaveOnEmptyCooldown: 30000
           }
         });
-      await interaction.editReply({
-        embeds: [
-          new EmbedBuilder().setDescription(`🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`)
-          .setThumbnail(result.tracks[0].thumbnail).setColor('DarkAqua')
-        ]
-      });
+
+      if(result.playlist == null){
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder().setTitle().setDescription(`🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`)
+            .setThumbnail(result.tracks[0].thumbnail).setColor('DarkAqua')
+          ]
+        });
+      } else {
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder().setDescription(`🎶 | Se ha puesto la playlist **${result.playlist.title}**.`)
+            .setThumbnail(result.tracks[0].thumbnail).setColor('DarkAqua')
+          ]
+        });
+      }
     } catch (error) {
       console.error(error);
       await interaction.editReply({
