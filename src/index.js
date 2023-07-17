@@ -2,14 +2,17 @@ require('dotenv').config();
 const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, GatewayIntentBits, EmbedBuilder } = require('discord.js');
-const { Player } = require('discord-player');
+const { Player, useQueue } = require('discord-player');
 const Replies = require('./Replies/Replies');
 const funnyReplies = require('./Replies/FunnyReplies');
 const funnyReactions = require('./Replies/FunnyReactions');
 const funnyMessages = require('./Replies/FunnyMessages');
 const token = process.env.TOKEN;
+const gatoId = process.env.CLIENT_ID;
+const guildId = process.env.GUILD_ID;
 const replies = new Replies(funnyReplies, funnyReactions, funnyMessages);
 const { getRandomInt } = require('./helpers/getRandomInt');
+const { paginate } = require('./helpers/paginate');
 // Create a new client instance
 const client = new Client({
   intents: [
@@ -17,10 +20,11 @@ const client = new Client({
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildVoiceStates,
     GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessageReactions
   ]
 });
-
+let tracks = null;
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
@@ -106,6 +110,50 @@ client.on(Events.MessageCreate, async (message) => {
         message.channel.send({ content: authorMsg, allowedMentions: { users: [] } });
       });
     })
+  }
+});
+
+client.on(Events.MessageReactionAdd, async (reaction, user) => {
+  if (user.bot) return; // Ignorar reacciones de otros bots
+
+  const queue = useQueue(guildId);
+  if(tracks == null){
+    tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
+  }
+  // Previous Page
+  if (reaction.emoji.name == 'gatoC' && reaction.message.author.id == gatoId) {
+    tracks.goPreviousPage();
+    const currentPage = tracks.currentPage;
+    const currentData = tracks.getCurrentPageData();
+    let message = '';
+    for (let index = 0; index < currentData.length; index++) {
+      message += `**[${currentPage}${index}]** ${currentData[index].title}\n`;
+    }
+    const embeddedMessage = {
+      embeds:[
+        new EmbedBuilder().setTitle('Gato Cola').setDescription(message)
+      ]
+    };
+    reaction.message.edit(embeddedMessage);
+    message = '';
+  }
+
+  // Next Page
+  if (reaction.emoji.name == 'tobi' && reaction.message.author.id == gatoId) {
+    tracks.goNextPage();
+    const currentPage = tracks.currentPage;
+    const currentData = tracks.getCurrentPageData();
+    let message = '';
+    for (let index = 0; index < currentData.length; index++) {
+      message += `**[${currentPage}${index}]** ${currentData[index].title}\n`;
+    }
+    const embeddedMessage = {
+      embeds:[ 
+        new EmbedBuilder().setTitle('Gato Cola').setDescription(message)
+      ]
+    };
+    reaction.message.edit(embeddedMessage);
+    message = '';
   }
 });
 

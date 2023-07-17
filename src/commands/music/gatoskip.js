@@ -11,14 +11,20 @@ module.exports = {
     if (!queue) return interaction.reply('No hay nada sonando elmio.');
     
     const currentSong = queue.currentTrack;
-
     queue.node.skip();
 
-    await interaction.reply({
-      embeds: [
-        new EmbedBuilder().setDescription(`Se ha saltado **${currentSong.title}**`)
-          .setThumbnail(currentSong.thumbnail).setColor('DarkAqua')
-      ]
-    });
+    try {
+      await interaction.reply({
+        embeds: [
+          new EmbedBuilder().setDescription(`Se ha saltado **${currentSong.title}**`)
+            .setThumbnail(currentSong.thumbnail).setColor('DarkAqua')
+        ]
+      });
+    } catch (error) {
+      console.error(error);
+      await interaction.editReply({
+        content: '¡Ha ocurrido un error al saltar la canción!\n'
+      });
+    }
   }
 };
