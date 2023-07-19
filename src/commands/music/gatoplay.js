@@ -77,7 +77,7 @@ module.exports = {
       if(result.playlist == null){
         await interaction.editReply({
           embeds: [
-            new EmbedBuilder().setTitle().setDescription(`🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`)
+            new EmbedBuilder().setDescription(`🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`)
             .setThumbnail(result.tracks[0].thumbnail).setColor('DarkAqua')
           ]
         });
