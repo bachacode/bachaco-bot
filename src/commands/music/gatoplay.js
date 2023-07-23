@@ -41,15 +41,7 @@ module.exports = {
         result.tracks.shift()
       }
     }
-    let nsfwCounter = 0;
-    // Si la playlist tiene canciones NSFW, las elimina
-    result.tracks = result.tracks.filter((track => {
-      if(track.metadata.nsfw == false){
-        return track
-      } else {
-        nsfwCounter++;
-      }
-    }));
+
     // Guard Statements
     if(!result?.tracks.length && query.includes('?list=')) {
       return interaction.editReply(`¡No se pueden reproducir mix generados por youtube 💀💀💀`);
@@ -70,7 +62,8 @@ module.exports = {
               requestedBy: interaction.user
             },
             leaveOnEndCooldown: 300000,
-            leaveOnEmptyCooldown: 30000
+            leaveOnEmptyCooldown: 30000,
+            skipOnNoStream: true
           }
         });
 
