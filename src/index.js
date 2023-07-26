@@ -117,11 +117,11 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
   if (user.bot) return; // Ignorar reacciones de otros bots
 
   const queue = useQueue(guildId);
-  if(tracks == null){
+  if(tracks == null && queue.tracks != null){
     tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
   }
   // Previous Page
-  if (reaction.emoji.name == 'gatoC' && reaction.message.author.id == gatoId) {
+  if (tracks != null && reaction.emoji.name == 'gatoC' && reaction.message.author.id == gatoId) {
     tracks.goPreviousPage();
     const currentPage = tracks.currentPage;
     const currentData = tracks.getCurrentPageData();
