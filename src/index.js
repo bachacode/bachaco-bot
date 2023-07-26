@@ -117,7 +117,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
   if (user.bot) return; // Ignorar reacciones de otros bots
 
   const queue = useQueue(guildId);
-  if(tracks == null && queue.tracks != null){
+  if(tracks == null && queue != null){
     tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
   }
   // Previous Page
