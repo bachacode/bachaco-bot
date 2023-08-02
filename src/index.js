@@ -99,7 +99,7 @@ client.on(Events.MessageCreate, async (message) => {
   console.log(`${message.author.username}: ${message.content}`);
   replies.messages.push({ content: message.content, user: message.author.username });
   replies.checkMessage(message);
-  if(message.content.includes('https://twitter.com')){
+  if(message.content.includes('https://twitter.com') && message.content.includes('status')){
     let originalString = message.content;
     let pos = originalString.lastIndexOf('twitter.com');
     let replace = 'vx'
