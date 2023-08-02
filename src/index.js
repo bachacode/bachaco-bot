@@ -104,6 +104,9 @@ client.on(Events.MessageCreate, async (message) => {
     let pos = originalString.lastIndexOf('twitter.com');
     let replace = 'vx'
     let newString = originalString.slice(0, pos) + replace + originalString.slice(pos);
+    if(newString.includes('/photo')) {
+      newString = newString.split("/photo")[0];
+    }
     let authorMsg = ` by <@${message.author.id}>`
     message.delete().then((message) => {
       message.channel.send(newString).then((message) => {
