@@ -26,9 +26,9 @@ const client = new Client({
 });
 let tracks = null;
 client.commands = new Collection();
+client.vxPrefix = true;
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
-
 for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
   const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
@@ -99,21 +99,23 @@ client.on(Events.MessageCreate, async (message) => {
   console.log(`${message.author.username}: ${message.content}`);
   replies.messages.push({ content: message.content, user: message.author.username });
   replies.checkMessage(message);
-  // if(message.content.includes('https://twitter.com') && message.content.includes('status')){
-  //   let originalString = message.content;
-  //   let pos = originalString.lastIndexOf('twitter.com');
-  //   let replace = 'vx'
-  //   let newString = originalString.slice(0, pos) + replace + originalString.slice(pos);
-  //   if(newString.includes('/photo')) {
-  //     newString = newString.split("/photo")[0];
-  //   }
-  //   let authorMsg = ` by <@${message.author.id}>`
-  //   message.delete().then((message) => {
-  //     message.channel.send(newString).then((message) => {
-  //       message.channel.send({ content: authorMsg, allowedMentions: { users: [] } });
-  //     });
-  //   })
-  // }
+  if(message.client.vxPrefix == true){
+    if(message.content.includes('https://twitter.com') && message.content.includes('status')){
+      let originalString = message.content;
+      let pos = originalString.lastIndexOf('twitter.com');
+      let replace = 'vx'
+      let newString = originalString.slice(0, pos) + replace + originalString.slice(pos);
+      if(newString.includes('/photo')) {
+        newString = newString.split("/photo")[0];
+      }
+      let authorMsg = ` by <@${message.author.id}>`
+      message.delete().then((message) => {
+        message.channel.send(newString).then((message) => {
+          message.channel.send({ content: authorMsg, allowedMentions: { users: [] } });
+        });
+      })
+    }
+  }
 });
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
