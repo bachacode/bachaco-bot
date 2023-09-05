@@ -70,14 +70,20 @@ module.exports = {
       if(result.playlist == null){
         await interaction.editReply({
           embeds: [
-            new EmbedBuilder().setDescription(`🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`)
+            new EmbedBuilder()
+            .setTitle('Enlace a la canción')
+            .setURL(result.tracks[0].url)
+            .setDescription(`🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`)
             .setThumbnail(result.tracks[0].thumbnail).setColor('DarkAqua')
           ]
         });
       } else {
         await interaction.editReply({
           embeds: [
-            new EmbedBuilder().setDescription(`🎶 | Se ha puesto la playlist **${result.playlist.title}**.`)
+            new EmbedBuilder()
+            .setTitle('Enlace a la playlist')
+            .setURL(result.playlist.url)
+            .setDescription(`🎶 | Se ha puesto la playlist **${result.playlist.title}**.`)
             .setThumbnail(result.tracks[0].thumbnail).setColor('DarkAqua')
           ]
         });
