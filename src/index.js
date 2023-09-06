@@ -73,7 +73,7 @@ player.extractors.loadDefault();
 // this event is emitted whenever discord-player starts to play a track
 player.events.on('playerStart', (queue, track) => {
   // we will later define queue.metadata object while creating the queue
-  queue.metadata.channel.send(`Esta sonando **[${track.title} by ${track.author}](${track.url})**`);
+  queue.metadata.channel.send(`Esta sonando **[${track.title} by ${track.author}](<${track.url}>)**`);
 });
 
 // Slash Command Handling
