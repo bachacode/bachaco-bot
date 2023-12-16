@@ -1,5 +1,4 @@
-const { Interaction } = require('discord.js');
-
+/** @typedef {import('discord.js').Interaction} Interaction */
 /**
  *
  * @param {Interaction} interaction

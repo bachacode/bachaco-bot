@@ -1,5 +1,5 @@
-const { GuildMember, EmbedBuilder } = require('discord.js');
-
+const { EmbedBuilder } = require('discord.js');
+/** @typedef {import('discord.js').GuildMember} GuildMember */
 /**
  *
  * @param {GuildMember} member

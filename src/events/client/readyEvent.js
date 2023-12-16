@@ -1,6 +1,7 @@
+/** @typedef {import('discord.js').Client} Client */
 /**
  *
- * @param {import("discord.js").Client} c
+ * @param {Client} c
  */
 const readyEvent = (c) => {
     console.log(`¡Listo! Logeado como ${c.user.tag}`);

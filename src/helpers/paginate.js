@@ -1,25 +1,25 @@
 exports.paginate = function (array, pageSize) {
     const paginatedObject = {
         data: [],
-        pageSize: pageSize,
+        pageSize,
         currentPage: 0,
-        getCurrentPageData() {
+        getCurrentPageData () {
             return this.data[this.currentPage];
         },
-        goPreviousPage() {
-            if(this.currentPage > 0){
+        goPreviousPage () {
+            if (this.currentPage > 0) {
                 this.currentPage--;
             }
         },
-        goNextPage() {
-            if(this.currentPage < this.data.length){
+        goNextPage () {
+            if (this.currentPage < this.data.length) {
                 this.currentPage++;
             }
         }
     };
     for (let i = 0; i < array.length; i += paginatedObject.pageSize) {
-      const page = array.slice(i, i + paginatedObject.pageSize);
-      paginatedObject.data.push(page);
+        const page = array.slice(i, i + paginatedObject.pageSize);
+        paginatedObject.data.push(page);
     }
     return paginatedObject;
-  }
+};

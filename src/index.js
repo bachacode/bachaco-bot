@@ -63,7 +63,11 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
         tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
     }
     // Previous Page
-    if (tracks != null && reaction.emoji.name == 'gatoC' && reaction.message.author.id == gatoId) {
+    if (
+        tracks != null &&
+        reaction.emoji.name === 'gatoC' &&
+        reaction.message.author.id === gatoId
+    ) {
         tracks.goPreviousPage();
         const currentPage = tracks.currentPage;
         const currentData = tracks.getCurrentPageData();
@@ -79,7 +83,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
     }
 
     // Next Page
-    if (reaction.emoji.name == 'tobi' && reaction.message.author.id == gatoId) {
+    if (reaction.emoji.name === 'tobi' && reaction.message.author.id === gatoId) {
         tracks.goNextPage();
         const currentPage = tracks.currentPage;
         const currentData = tracks.getCurrentPageData();

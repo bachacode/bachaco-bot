@@ -4,10 +4,10 @@ const funnyReplies = require('../../Replies/FunnyReplies');
 const Replies = require('../../Replies/Replies');
 
 const replies = new Replies(funnyReplies, funnyReactions, funnyMessages);
-
+/** @typedef {import('discord.js').Message} Message */
 /**
  *
- * @param {import("discord.js").Message} message
+ * @param {Message} message
  * @returns
  */
 const messageEvent = async (message) => {
@@ -23,7 +23,7 @@ const messageEvent = async (message) => {
     replies.checkMessage(message);
 
     // Twitter vx
-    if (message.client.vxPrefix == true) {
+    if (message.client.vxPrefix === true) {
         if (
             (message.content.includes('https://twitter.com') ||
                 message.content.includes('https://x.com')) &&

@@ -8,7 +8,13 @@ module.exports = {
     parserOptions: {
         ecmaVersion: 'latest'
     },
+    settings: {
+        jsdoc: {
+            mode: 'typescript'
+        }
+    },
     rules: {
-        semi: [4, 'always']
+        semi: ['error', 'always'],
+        indent: ['error', 4]
     }
 };

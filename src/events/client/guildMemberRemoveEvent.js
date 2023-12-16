@@ -1,17 +1,18 @@
-const { GuildMember, PartialGuildMember, EmbedBuilder } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { getRandomInt } = require('../../helpers/getRandomInt');
-
+/** @typedef {import('discord.js').GuildMember} GuildMember */
+/** @typedef {import('discord.js').PartialGuildMember} PartialGuildMember */
 /**
  *
  * @param {GuildMember|PartialGuildMember} member
  */
 const guildMemberRemoveEvent = async (member) => {
-    let channel = member.client.channels.cache.get('603201649099669526');
-    let { user } = member;
+    const channel = member.client.channels.cache.get('603201649099669526');
+    const { user } = member;
 
-    let name = `<@${user.id}>`;
-    let rand = getRandomInt(2);
-    let embed = new EmbedBuilder();
+    const name = `<@${user.id}>`;
+    const rand = getRandomInt(2);
+    const embed = new EmbedBuilder();
     if (rand === 1) {
         embed
             .setColor('Aqua')
