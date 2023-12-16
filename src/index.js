@@ -3,25 +3,31 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { Client, Collection, Events, EmbedBuilder } = require('discord.js');
 const { Player, useQueue } = require('discord-player');
-const Replies = require('./Replies/Replies');
-const funnyReplies = require('./Replies/FunnyReplies');
-const funnyReactions = require('./Replies/FunnyReactions');
-const funnyMessages = require('./Replies/FunnyMessages');
 const token = process.env.TOKEN;
 const gatoId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
-const replies = new Replies(funnyReplies, funnyReactions, funnyMessages);
-const { getRandomInt } = require('./helpers/getRandomInt');
 const { paginate } = require('./helpers/paginate');
 const clientOptions = require('./config/clientOptions');
+const foldersPath = path.join(__dirname, 'commands');
+const readyEvent = require('./events/client/readyEvent');
+const commandHandlingEvent = require('./events/client/commandHandlingEvent');
+const messageEvent = require('./events/client/messageEvent');
+const GuildMemberAddEvent = require('./events/client/guildMemberAddEvent');
+const guildMemberRemoveEvent = require('./events/client/guildMemberRemoveEvent');
 
 // Create a new client instance
 const client = new Client(clientOptions);
 
+// Create a new player instance
+const player = new Player(client);
+
+// This method will load all the extractors from the @discord-player/extractor package
+player.extractors.loadDefault();
+
 let tracks = null;
 client.commands = new Collection();
 client.vxPrefix = true;
-const foldersPath = path.join(__dirname, 'commands');
+
 const commandFolders = fs.readdirSync(foldersPath);
 for (const folder of commandFolders) {
     const commandsPath = path.join(foldersPath, folder);
@@ -41,99 +47,13 @@ for (const folder of commandFolders) {
 }
 
 // When the client is ready, run this code (only once)
-// We use 'c' for the event parameter to keep it separate from the already defined 'client'
-client.once(Events.ClientReady, (c) => {
-    console.log(`¡Listo! Logeado como ${c.user.tag}`);
-    // let minutes = 1;
-    // let the_interval = minutes * 10 * 1000;
-    // let rand = getRandomInt(2);
-    // let randomMessage;
+client.once(Events.ClientReady, readyEvent);
 
-    // setInterval(() => {
-    //   let channel = c.channels.cache.get('603201649099669526');
-    //   channel.send({
-    //     content: 'pipe'
-    //   });
-    //   // do your stuff here
-    // }, the_interval);
-});
-
-// Create a new player instance
-const player = new Player(client);
-
-// This method will load all the extractors from the @discord-player/extractor package
-player.extractors.loadDefault();
-
-// this event is emitted whenever discord-player starts to play a track
-player.events.on('playerStart', (queue, track) => {
-    // we will later define queue.metadata object while creating the queue
-    queue.metadata.channel.send(
-        `Esta sonando **[${track.title} by ${track.author}](<${track.url}>)**`
-    );
-});
-player.events.on('playerError', (queue, error) => {
-    console.log(error);
-});
-player.events.on('error', (queue, error) => {
-    console.log(error);
-});
 // Slash Command Handling
-client.on(Events.InteractionCreate, async (interaction) => {
-    if (!interaction.isChatInputCommand()) return;
-
-    const command = interaction.client.commands.get(interaction.commandName);
-
-    if (!command) {
-        console.error(`El comando ${interaction.commandName} no existe.`);
-        return;
-    }
-
-    try {
-        await command.execute({ client, interaction });
-    } catch (error) {
-        console.error(error);
-        if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({
-                content: '¡Ha ocurrido un error ejecutando el comando!',
-                ephemeral: true
-            });
-        } else {
-            await interaction.reply({
-                content: '¡Ha ocurrido un error ejecutando el comando!',
-                ephemeral: true
-            });
-        }
-    }
-});
+client.on(Events.InteractionCreate, commandHandlingEvent);
 
 // Funny Replies Interactions
-client.on(Events.MessageCreate, async (message) => {
-    if (message.author.bot === true) return;
-    console.log(`${message.author.username}: ${message.content}`);
-    replies.messages.push({ content: message.content, user: message.author.username });
-    replies.checkMessage(message);
-    if (message.client.vxPrefix == true) {
-        if (
-            (message.content.includes('https://twitter.com') ||
-                message.content.includes('https://x.com')) &&
-            message.content.includes('status')
-        ) {
-            const originalString = message.content;
-            let newString = originalString.includes('twitter.com')
-                ? originalString.replace('twitter.com', 'vxtwitter.com')
-                : originalString.replace('x.com', 'vxtwitter.com');
-            if (newString.includes('/photo')) {
-                newString = newString.split('/photo')[0];
-            }
-            let authorMsg = ` by <@${message.author.id}>`;
-            message.delete().then((message) => {
-                message.channel.send(newString).then((message) => {
-                    message.channel.send({ content: authorMsg, allowedMentions: { users: [] } });
-                });
-            });
-        }
-    }
-});
+client.on(Events.MessageCreate, messageEvent);
 
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
     if (user.bot) return; // Ignorar reacciones de otros bots
@@ -176,48 +96,25 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
 });
 
 // Mensaje de bienvenida
-client.on(Events.GuildMemberAdd, async (member) => {
-    let channel = member.client.channels.cache.get('603201649099669526');
-    let { user } = member;
-    member.roles.add('603340605774626871');
-    let name = `<@${user.id}>`;
-    let embed = new EmbedBuilder()
-        .setColor('Aqua')
-        .setTitle('qlq <:gatoC:957421664738639872> 🍷')
-        .setImage('https://media.tenor.com/eH-RoS91Q1gAAAAC/cat.gif')
-        .setDescription(
-            `${name} acaba de cometer el error mas grande de su vida entrando a esta tierra profana.`
-        );
-    channel.send({
-        embeds: [embed]
-    });
-});
+client.on(Events.GuildMemberAdd, GuildMemberAddEvent);
 
 // Mensaje de despedida
-client.on(Events.GuildMemberRemove, async (member) => {
-    let channel = member.client.channels.cache.get('603201649099669526');
-    let { user } = member;
+client.on(Events.GuildMemberRemove, guildMemberRemoveEvent);
 
-    let name = `<@${user.id}>`;
-    let rand = getRandomInt(2);
-    let embed = new EmbedBuilder();
-    if (rand === 1) {
-        embed
-            .setColor('Aqua')
-            .setTitle('c lo acomodaron por las costillas <:sadcheems:869742943425151087>')
-            .setImage('https://media.tenor.com/ww56Kix_vM8AAAAC/seloacomodoporlascostillas.gif')
-            .setDescription(`${name} no aguanto la pela.`);
-    } else if (rand === 0) {
-        embed
-            .setColor('Aqua')
-            .setTitle('c le fue la luz <:sadcheems:869742943425151087>')
-            .setImage('https://media.tenor.com/vHMD9o7RmfYAAAAC/snake-salute.gif')
-            .setDescription(`${name} no aguanto la pela.`);
-    }
+// this event is emitted whenever discord-player starts to play a track
+player.events.on('playerStart', (queue, track) => {
+    // we will later define queue.metadata object while creating the queue
+    queue.metadata.channel.send(
+        `Esta sonando **[${track.title} by ${track.author}](<${track.url}>)**`
+    );
+});
 
-    channel.send({
-        embeds: [embed]
-    });
+player.events.on('playerError', (queue, error) => {
+    console.log(error);
+});
+
+player.events.on('error', (queue, error) => {
+    console.log(error);
 });
 
 // Log in to Discord with your client's token
