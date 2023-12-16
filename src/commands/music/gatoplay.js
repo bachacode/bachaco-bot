@@ -8,7 +8,7 @@ module.exports = {
         .addStringOption((option) =>
             option.setName('query').setDescription('la URL de la canción.').setRequired(true)
         ),
-    async execute ({ interaction }) {
+    async execute({ interaction }) {
         const player = useMainPlayer();
 
         // Revisa si el usuario esta conectado a un canal de voz.
@@ -18,7 +18,9 @@ module.exports = {
 
         // Revisa si ya hay un bot conectado a otro canal.
         const queue = useQueue(interaction.guild.id);
-        if (queue && queue.channel !== channel) { return interaction.reply('Ya estoy en otro canal de voz.'); }
+        if (queue && queue.channel !== channel) {
+            return interaction.reply('Ya estoy en otro canal de voz.');
+        }
 
         let query = interaction.options.getString('query', true);
         let queryIndex = null;

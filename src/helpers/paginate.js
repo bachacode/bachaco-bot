@@ -3,15 +3,15 @@ exports.paginate = function (array, pageSize) {
         data: [],
         pageSize,
         currentPage: 0,
-        getCurrentPageData () {
+        getCurrentPageData() {
             return this.data[this.currentPage];
         },
-        goPreviousPage () {
+        goPreviousPage() {
             if (this.currentPage > 0) {
                 this.currentPage--;
             }
         },
-        goNextPage () {
+        goNextPage() {
             if (this.currentPage < this.data.length) {
                 this.currentPage++;
             }

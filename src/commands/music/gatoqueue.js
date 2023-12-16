@@ -3,7 +3,7 @@ const { useQueue } = require('discord-player');
 const { paginate } = require('../../helpers/paginate');
 module.exports = {
     data: new SlashCommandBuilder().setName('gatoqueue').setDescription('Replies with GatoPong!'),
-    async execute ({ interaction }) {
+    async execute({ interaction }) {
         const queue = useQueue(interaction.guild.id);
         const currentTrack = queue.currentTrack;
         const tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
@@ -15,9 +15,7 @@ module.exports = {
         }
 
         const embeddedMessage = {
-            embeds: [
-                new EmbedBuilder().setTitle('Gato Cola').setDescription(message)
-            ]
+            embeds: [new EmbedBuilder().setTitle('Gato Cola').setDescription(message)]
         };
 
         await interaction.reply(embeddedMessage);

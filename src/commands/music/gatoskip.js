@@ -5,8 +5,8 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('gatoskip')
         .setDescription('gatoc se salta la canción actual.'),
-    async execute ({ interaction }) {
-    // Revisa si hay una queue activa.
+    async execute({ interaction }) {
+        // Revisa si hay una queue activa.
         const queue = useQueue(interaction.guild.id);
         if (!queue) return interaction.reply('No hay nada sonando elmio.');
 
@@ -16,8 +16,10 @@ module.exports = {
         try {
             await interaction.reply({
                 embeds: [
-                    new EmbedBuilder().setDescription(`Se ha saltado **${currentSong.title}**`)
-                        .setThumbnail(currentSong.thumbnail).setColor('DarkAqua')
+                    new EmbedBuilder()
+                        .setDescription(`Se ha saltado **${currentSong.title}**`)
+                        .setThumbnail(currentSong.thumbnail)
+                        .setColor('DarkAqua')
                 ]
             });
         } catch (error) {
