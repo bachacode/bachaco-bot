@@ -7,13 +7,9 @@ const token = process.env.TOKEN;
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 
-/** @typedef {import('discord.js').CommandInteraction} CommandInteraction */
-/**
- * An array of commands.
- *
- * @type {CommandInteraction[]} interaction The interaction object.
- */
-const commands = [];
+/** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
+
+/** @typedef {import('discord.js').SlashCommandBuilder} SlashCommandBuilder */
 
 // Construct and prepare an instance of the REST module
 const rest = new REST().setToken(token);
@@ -21,26 +17,40 @@ const rest = new REST().setToken(token);
 // Grab all the command files from the commands directory you created earlier
 const foldersPath = path.join(__dirname, 'commands');
 const commandFolders = fs.readdirSync(foldersPath);
-for (const folder of commandFolders) {
-    // Grab all the command files from the commands directory you created earlier
-    const commandsPath = path.join(foldersPath, folder);
-    const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-    // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
-    for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
-        const command = require(filePath);
-        if ('data' in command && 'execute' in command) {
-            commands.push(command.data);
-        } else {
-            console.log(
-                `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-            );
+const getCommands = () => {
+    /**
+     * An array of commands.
+     *
+     * @type {{
+     * data: SlashCommandBuilder,
+     * execute(interaction: ChatInputCommandInteraction) => Promise<void>
+     * }[]} interaction The interaction object.
+     */
+    const commands = [];
+    for (const folder of commandFolders) {
+        // Grab all the command files from the commands directory you created earlier
+        const commandsPath = path.join(foldersPath, folder);
+        const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
+        // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
+        for (const file of commandFiles) {
+            const filePath = path.join(commandsPath, file);
+            const command = require(filePath);
+            console.log(command);
+            if ('data' in command && 'execute' in command) {
+                commands.push(command);
+            } else {
+                console.log(
+                    `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+                );
+            }
         }
     }
-}
+    return commands;
+};
 
 // and deploy your commands!
 const registerCommands = async () => {
+    const commands = getCommands();
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
@@ -61,20 +71,12 @@ const registerCommands = async () => {
  * @param {Client} client
  */
 const setCommands = (client) => {
-    for (const folder of commandFolders) {
-        const commandsPath = path.join(foldersPath, folder);
-        const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-        for (const file of commandFiles) {
-            const filePath = path.join(commandsPath, file);
-            const command = require(filePath);
-            // Set a new item in the Collection with the key as the command name and the value as the exported module
-            if ('data' in command && 'execute' in command) {
-                client.commands.set(command.data.name, command);
-            } else {
-                console.log(
-                    `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-                );
-            }
+    const commands = getCommands();
+    for (const command of commands) {
+        try {
+            client.commands.set(command.data.name, command);
+        } catch (error) {
+            console.log(`${command.data} \n: ${error}`);
         }
     }
 };

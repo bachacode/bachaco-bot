@@ -6,12 +6,13 @@ const gatoId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 const { paginate } = require('./helpers/paginate');
 const clientOptions = require('./config/clientOptions');
-const readyEvent = require('./events/client/ready-event');
-const commandHandlingEvent = require('./events/client/commands-event');
-const messageEvent = require('./events/client/messages-event');
-const GuildMemberAddEvent = require('./events/client/joining-event');
-const guildMemberRemoveEvent = require('./events/client/leaving-event');
+const readyEvent = require('./events/client/ready');
+const commandHandlingEvent = require('./events/client/command-handling');
+const messageEvent = require('./events/client/messages');
+const GuildMemberAddEvent = require('./events/client/joining-message');
+const guildMemberRemoveEvent = require('./events/client/leaving-message');
 const { setCommands } = require('./register-commands');
+const logger = require('./helpers/logger');
 // Create a new client instance
 const client = new Client(clientOptions);
 
@@ -86,6 +87,11 @@ client.on(Events.GuildMemberAdd, GuildMemberAddEvent);
 
 // Mensaje de despedida
 client.on(Events.GuildMemberRemove, guildMemberRemoveEvent);
+
+client.on(Events.Error, (error) => {
+    console.error('Error:', error);
+    logger(error);
+});
 
 // this event is emitted whenever discord-player starts to play a track
 player.events.on('playerStart', (queue, track) => {
