@@ -1,6 +1,4 @@
 require('dotenv').config();
-const fs = require('node:fs');
-const path = require('node:path');
 const { Client, Collection, Events, EmbedBuilder } = require('discord.js');
 const { Player, useQueue } = require('discord-player');
 const token = process.env.TOKEN;
@@ -8,13 +6,12 @@ const gatoId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 const { paginate } = require('./helpers/paginate');
 const clientOptions = require('./config/clientOptions');
-const foldersPath = path.join(__dirname, 'commands');
-const readyEvent = require('./events/client/readyEvent');
-const commandHandlingEvent = require('./events/client/commandHandlingEvent');
-const messageEvent = require('./events/client/messageEvent');
-const GuildMemberAddEvent = require('./events/client/guildMemberAddEvent');
-const guildMemberRemoveEvent = require('./events/client/guildMemberRemoveEvent');
-
+const readyEvent = require('./events/client/ready-event');
+const commandHandlingEvent = require('./events/client/commands-event');
+const messageEvent = require('./events/client/messages-event');
+const GuildMemberAddEvent = require('./events/client/joining-event');
+const guildMemberRemoveEvent = require('./events/client/leaving-event');
+const { setCommands } = require('./register-commands');
 // Create a new client instance
 const client = new Client(clientOptions);
 
@@ -28,23 +25,8 @@ let tracks = null;
 client.commands = new Collection();
 client.vxPrefix = true;
 
-const commandFolders = fs.readdirSync(foldersPath);
-for (const folder of commandFolders) {
-    const commandsPath = path.join(foldersPath, folder);
-    const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-    for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
-        const command = require(filePath);
-        // Set a new item in the Collection with the key as the command name and the value as the exported module
-        if ('data' in command && 'execute' in command) {
-            client.commands.set(command.data.name, command);
-        } else {
-            console.log(
-                `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-            );
-        }
-    }
-}
+// Registering commands
+setCommands(client);
 
 // When the client is ready, run this code (only once)
 client.once(Events.ClientReady, readyEvent);
