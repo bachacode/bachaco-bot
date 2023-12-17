@@ -1,12 +1,13 @@
-/** @typedef {import('discord.js').Interaction} Interaction */
+/** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /**
  *
- * @param {Interaction} interaction
+ * @param {ChatInputCommandInteraction} interaction
  * @returns
  */
 const commandHandlingEvent = async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
-    const client = interaction.client;
+
+    // Check if the command exists and run it if so
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) {
@@ -15,7 +16,7 @@ const commandHandlingEvent = async (interaction) => {
     }
 
     try {
-        await command.execute({ client, interaction });
+        await command.execute(interaction);
     } catch (error) {
         console.error(error);
         if (interaction.replied || interaction.deferred) {
