@@ -19,6 +19,7 @@
     "@discord-player/extractor": "^4.3.1",
     "@discordjs/opus": "^0.9.0",
     "axios": "^1.4.0",
+    "colors": "^1.4.0",
     "discord-api-types": "^0.37.45",
     "discord-interactions": "^3.4.0",
     "discord-player": "^6.5.0",
@@ -30,6 +31,7 @@
     "needle": "^3.2.0",
     "play-dl": "^1.9.6",
     "twitter-api-sdk": "^1.2.1",
+    "winston": "^3.11.0",
     "ytdl-core": "^4.11.5"
   },
   "devDependencies": {

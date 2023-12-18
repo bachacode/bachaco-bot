@@ -1,8 +1,8 @@
 require('dotenv').config();
 const token = process.env.TOKEN;
 const clientOptions = require('./config/clientOptions');
-const GatoClient = require('./lib/GatoClient');
-const GatoPlayer = require('./lib/GatoPlayer');
+const GatoClient = require('./classes/GatoClient');
+const GatoPlayer = require('./classes/GatoPlayer');
 
 // Create a new client instance
 const client = new GatoClient(clientOptions, __dirname, token);
