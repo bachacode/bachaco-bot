@@ -5,7 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('gatoskip')
         .setDescription('gatoc se salta la canción actual.'),
-    async execute({ interaction }) {
+    async execute(interaction) {
         // Revisa si hay una queue activa.
         const queue = useQueue(interaction.guild.id);
         if (!queue) return interaction.reply('No hay nada sonando elmio.');

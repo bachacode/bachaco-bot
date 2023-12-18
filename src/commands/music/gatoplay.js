@@ -8,7 +8,7 @@ module.exports = {
         .addStringOption((option) =>
             option.setName('query').setDescription('la URL de la canción.').setRequired(true)
         ),
-    async execute({ interaction }) {
+    async execute(interaction) {
         const player = useMainPlayer();
 
         // Revisa si el usuario esta conectado a un canal de voz.

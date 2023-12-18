@@ -5,7 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('gatoresume')
         .setDescription('gatoc reanuda la canción actual.'),
-    async execute({ interaction }) {
+    async execute(interaction) {
         // Revisa si hay una queue activa.
         const queue = useQueue(interaction.guild.id);
 
