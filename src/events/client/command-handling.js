@@ -2,12 +2,14 @@
 /**
  *
  * @param {ChatInputCommandInteraction} interaction
- * @returns
+ * @returns {void}
  */
 const commandHandlingEvent = async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
-    // Check if the command exists and run it if so
+    /**
+     * @type {import('../../types').SlashCommand}
+     */
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) {

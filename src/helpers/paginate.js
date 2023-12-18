@@ -1,4 +1,10 @@
-exports.paginate = function (array, pageSize) {
+/**
+ *
+ * @param {any[]} array
+ * @param {number} pageSize
+ * @returns
+ */
+const paginate = (array, pageSize) => {
     const paginatedObject = {
         data: [],
         pageSize,
@@ -23,3 +29,5 @@ exports.paginate = function (array, pageSize) {
     }
     return paginatedObject;
 };
+
+module.exports = paginate;

@@ -1,5 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
-const { getRandomInt } = require('../../helpers/getRandomInt');
+const getRandomInt = require('../../helpers/getRandomInt');
 /** @typedef {import('discord.js').GuildMember} GuildMember */
 /** @typedef {import('discord.js').PartialGuildMember} PartialGuildMember */
 /**

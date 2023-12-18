@@ -11,6 +11,8 @@ const guildId = process.env.GUILD_ID;
 
 /** @typedef {import('discord.js').SlashCommandBuilder} SlashCommandBuilder */
 
+/** @typedef {import('discord.js').Client} Client */
+
 // Construct and prepare an instance of the REST module
 const rest = new REST().setToken(token);
 
@@ -21,10 +23,7 @@ const getCommands = () => {
     /**
      * An array of commands.
      *
-     * @type {{
-     * data: SlashCommandBuilder,
-     * execute(interaction: ChatInputCommandInteraction) => Promise<void>
-     * }[]} interaction The interaction object.
+     * @type {import('./types').SlashCommand[]} interaction The interaction object.
      */
     const commands = [];
     for (const folder of commandFolders) {
@@ -35,7 +34,6 @@ const getCommands = () => {
         for (const file of commandFiles) {
             const filePath = path.join(commandsPath, file);
             const command = require(filePath);
-            console.log(command);
             if ('data' in command && 'execute' in command) {
                 commands.push(command);
             } else {
@@ -65,7 +63,7 @@ const registerCommands = async () => {
         console.error(error);
     }
 };
-/** @typedef {import('discord.js').Client} Client */
+
 /**
  *
  * @param {Client} client

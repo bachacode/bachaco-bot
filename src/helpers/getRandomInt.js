@@ -1,3 +1,10 @@
-exports.getRandomInt = function (max) {
+/**
+ *
+ * @param {number} max
+ * @returns {number}
+ */
+const getRandomInt = (max) => {
     return Math.floor(Math.random() * max);
 };
+
+module.exports = getRandomInt;
