@@ -1,10 +1,12 @@
+const { Events } = require('discord.js');
+
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /**
  *
  * @param {ChatInputCommandInteraction} interaction
  * @returns {void}
  */
-const commandHandlingEvent = async (interaction) => {
+const execute = async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
 
     /**
@@ -35,4 +37,8 @@ const commandHandlingEvent = async (interaction) => {
     }
 };
 
-module.exports = commandHandlingEvent;
+module.exports = {
+    type: Events.InteractionCreate,
+    once: false,
+    execute
+};

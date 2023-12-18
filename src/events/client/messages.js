@@ -1,3 +1,4 @@
+const { Events } = require('discord.js');
 const funnyMessages = require('../../Replies/FunnyMessages');
 const funnyReactions = require('../../Replies/FunnyReactions');
 const funnyReplies = require('../../Replies/FunnyReplies');
@@ -10,7 +11,7 @@ const replies = new Replies(funnyReplies, funnyReactions, funnyMessages);
  * @param {Message} message
  * @returns
  */
-const messageEvent = async (message) => {
+const execute = async (message) => {
     // Return if message was sent by a bot
     if (message.author.bot === true) return;
     // log message
@@ -54,4 +55,8 @@ const messageEvent = async (message) => {
     }
 };
 
-module.exports = messageEvent;
+module.exports = {
+    type: Events.MessageCreate,
+    once: false,
+    execute
+};

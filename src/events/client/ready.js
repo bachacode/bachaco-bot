@@ -1,10 +1,12 @@
+const { Events } = require('discord.js');
 const moment = require('moment');
+
 /** @typedef {import('discord.js').Client} Client */
+
 /**
- *
  * @param {Client} c
  */
-const readyEvent = (c) => {
+const execute = (c) => {
     console.log(`¡Listo! Logeado como ${c.user.tag}`);
 
     // Set interval for updating global hour
@@ -15,4 +17,8 @@ const readyEvent = (c) => {
     }, 60000);
 };
 
-module.exports = readyEvent;
+module.exports = {
+    type: Events.ClientReady,
+    once: true,
+    execute
+};
