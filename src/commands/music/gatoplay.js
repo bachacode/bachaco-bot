@@ -60,14 +60,31 @@ module.exports = {
         try {
             await player.play(channel, result, {
                 nodeOptions: {
+                    leaveOnEmpty: true,
+                    leaveOnEmptyCooldown: 600_000,
+                    leaveOnEnd: false,
+                    leaveOnEndCooldown: 600_000,
+                    leaveOnStop: false,
+                    leaveOnStopCooldown: 600_000,
+                    defaultVolume: 50,
+                    maxQueueSize: 10_000,
+                    maxHistorySize: 1_000,
+                    bufferingTimeout: 3_000,
+                    connectionTimeout: 20_000,
+                    skipOnNoStream: true,
+                    progressBar: {
+                        length: 14,
+                        timecodes: false,
+                        separator: '┃',
+                        indicator: '🔘',
+                        leftChar: '▬',
+                        rightChar: '▬'
+                    },
                     metadata: {
                         channel: interaction.channel,
                         client: interaction.guild.members.me,
                         requestedBy: interaction.user
-                    },
-                    leaveOnEndCooldown: 300000,
-                    leaveOnEmptyCooldown: 30000,
-                    skipOnNoStream: true
+                    }
                 }
             });
 
