@@ -1,18 +1,17 @@
 require('dotenv').config();
-const { Player } = require('discord-player');
 const token = process.env.TOKEN;
 const clientOptions = require('./config/clientOptions');
 const GatoClient = require('./lib/GatoClient');
+const GatoPlayer = require('./lib/GatoPlayer');
 
 // Create a new client instance
 const client = new GatoClient(clientOptions, __dirname, token);
 
 // Create a new player instance
-const player = new Player(client);
-
-// This method will load all the extractors from the @discord-player/extractor package
-player.extractors.loadDefault();
-
+const player = new GatoPlayer(client, __dirname);
+player.once('debug', (message) => {
+    console.log(message);
+});
 // let tracks = null;
 
 // client.on(Events.MessageReactionAdd, async (reaction, user) => {
@@ -58,19 +57,3 @@ player.extractors.loadDefault();
 //         message = '';
 //     }
 // });
-
-// this event is emitted whenever discord-player starts to play a track
-player.events.on('playerStart', (queue, track) => {
-    // we will later define queue.metadata object while creating the queue
-    queue.metadata.channel.send(
-        `Esta sonando **[${track.title} by ${track.author}](<${track.url}>)**`
-    );
-});
-
-player.events.on('playerError', (queue, error) => {
-    console.log(error);
-});
-
-player.events.on('error', (queue, error) => {
-    console.log(error);
-});

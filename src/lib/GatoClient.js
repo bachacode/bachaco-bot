@@ -40,6 +40,7 @@ class GatoClient extends Client {
                 const command = require(filePath);
                 if ('data' in command && 'execute' in command) {
                     this.commands.set(command.data.name, command);
+                    console.log('Command Loaded: ' + file.split('.')[0]);
                 } else {
                     console.log(
                         `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
@@ -50,27 +51,22 @@ class GatoClient extends Client {
     }
 
     setEvents() {
-        const foldersPath = path.join(this.root, 'events');
-        const eventFolders = fs.readdirSync(foldersPath);
-        for (const folder of eventFolders) {
-            // Grab all the event files from the events directory you created earlier
-            const eventsPath = path.join(foldersPath, folder);
-            const eventFiles = fs.readdirSync(eventsPath).filter((file) => file.endsWith('.js'));
-            for (const file of eventFiles) {
-                const filePath = path.join(eventsPath, file);
-                const event = require(filePath);
-                if ('type' in event && 'once' in event && 'execute' in event) {
-                    if (event.once) {
-                        this.once(event.type, event.execute);
-                    } else {
-                        this.on(event.type, event.execute);
-                    }
-                    console.log('Event Loaded: ' + file.split('.')[0]);
+        const foldersPath = path.join(this.root, 'events', 'client');
+        const eventFiles = fs.readdirSync(foldersPath).filter((file) => file.endsWith('.js'));
+        for (const file of eventFiles) {
+            const filePath = path.join(foldersPath, file);
+            const event = require(filePath);
+            if ('type' in event && 'once' in event && 'execute' in event) {
+                if (event.once) {
+                    this.once(event.type, event.execute);
                 } else {
-                    console.log(
-                        `[WARNING] The event at ${filePath} is missing a required "type", "once" or "execute" property.`
-                    );
+                    this.on(event.type, event.execute);
                 }
+                console.log('Client Event Loaded: ' + file.split('.')[0]);
+            } else {
+                console.log(
+                    `[WARNING] The event at ${filePath} is missing a required "type", "once" or "execute" property.`
+                );
             }
         }
     }
