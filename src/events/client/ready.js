@@ -1,3 +1,4 @@
+const moment = require('moment');
 /** @typedef {import('discord.js').Client} Client */
 /**
  *
@@ -5,18 +6,13 @@
  */
 const readyEvent = (c) => {
     console.log(`¡Listo! Logeado como ${c.user.tag}`);
-    // let minutes = 1;
-    // let the_interval = minutes * 10 * 1000;
-    // let rand = getRandomInt(2);
-    // let randomMessage;
 
-    // setInterval(() => {
-    //   let channel = c.channels.cache.get('603201649099669526');
-    //   channel.send({
-    //     content: 'pipe'
-    //   });
-    //   // do your stuff here
-    // }, the_interval);
+    // Set interval for updating global hour
+    setInterval(() => {
+        const channel = c.channels.cache.get('1186106606283411506');
+        const hour = moment().format('hh:mm A');
+        channel.setName(hour);
+    }, 60000);
 };
 
 module.exports = readyEvent;

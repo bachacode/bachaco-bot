@@ -38,9 +38,17 @@ const messageEvent = async (message) => {
             }
             const authorMsg = ` by <@${message.author.id}>`;
             message.delete().then((message) => {
-                message.channel.send(newString).then((message) => {
-                    message.channel.send({ content: authorMsg, allowedMentions: { users: [] } });
-                });
+                message.channel
+                    .send(newString)
+                    .then((message) => {
+                        message.channel.send({
+                            content: authorMsg,
+                            allowedMentions: { users: [] }
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Error: ', error);
+                    });
             });
         }
     }
