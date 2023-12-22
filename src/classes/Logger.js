@@ -2,10 +2,11 @@ const colors = require('colors/safe');
 const path = require('path');
 const { createLogger, format, transports } = require('winston');
 const { printf } = format;
+
 class Logger {
     constructor(root) {
-        const errorFile = path.join(root, 'logs', 'errors.log');
-        const defaultFile = path.join(root, 'logs', 'default.log');
+        const errorFile = path.join(root, '..', 'logs', 'errors.log');
+        const defaultFile = path.join(root, '..', 'logs', 'default.log');
         this.logger = createLogger({
             format: format.combine(format.timestamp(), this.getFileFormat()),
             transports: [
@@ -34,7 +35,7 @@ class Logger {
 
     getFileFormat() {
         return printf(({ level, message, timestamp }) => {
-            return `${timestamp} ${level.toUpperCase()}: ${message}`;
+            return `${timestamp} [${level.toUpperCase()}]: ${message}`;
         });
     }
 

@@ -5,7 +5,7 @@ const fs = require('fs');
 class GatoPlayer extends Player {
     constructor(client, root) {
         super(client);
-
+        this.logger = client.logger;
         this.extractors.loadDefault();
         this.root = root;
         this.setEvents();
@@ -23,10 +23,10 @@ class GatoPlayer extends Player {
                 } else {
                     this.on(event.type, event.execute);
                 }
-                console.log('Player Event Loaded: ' + file.split('.')[0]);
+                this.logger.info('Player Event Loaded: ' + file.split('.')[0]);
             } else {
-                console.log(
-                    `[WARNING] The event at ${filePath} is missing a required "type", "once" or "execute" property.`
+                this.logger.warn(
+                    `The player event at ${filePath} is missing a required "type", "once" or "execute" property.`
                 );
             }
         }

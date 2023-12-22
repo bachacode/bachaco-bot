@@ -1,6 +1,7 @@
 const { Client, Collection } = require('discord.js');
 const path = require('path');
 const fs = require('fs');
+const Logger = require('./Logger');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @typedef {import('discord.js').SlashCommandBuilder} SlashCommandBuilder */
@@ -20,9 +21,9 @@ class GatoClient extends Client {
         this.vxPrefix = true;
         this.root = root;
         this.token = token;
+        this.logger = new Logger(root);
         this.setCommands();
         this.setEvents();
-        this.run();
     }
 
     setCommands() {
@@ -40,10 +41,10 @@ class GatoClient extends Client {
                 const command = require(filePath);
                 if ('data' in command && 'execute' in command) {
                     this.commands.set(command.data.name, command);
-                    console.log('Command Loaded: ' + file.split('.')[0]);
+                    this.logger.info('Command Loaded: ' + file.split('.')[0]);
                 } else {
-                    console.log(
-                        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+                    this.logger.warn(
+                        `The command at ${filePath} is missing a required "data" or "execute" property.`
                     );
                 }
             }
@@ -62,10 +63,10 @@ class GatoClient extends Client {
                 } else {
                     this.on(event.type, event.execute);
                 }
-                console.log('Client Event Loaded: ' + file.split('.')[0]);
+                this.logger.info('Client Event Loaded: ' + file.split('.')[0]);
             } else {
-                console.log(
-                    `[WARNING] The event at ${filePath} is missing a required "type", "once" or "execute" property.`
+                this.logger.warn(
+                    `The client event at ${filePath} is missing a required "type", "once" or "execute" property.`
                 );
             }
         }

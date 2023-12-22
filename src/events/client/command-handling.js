@@ -14,15 +14,20 @@ const execute = async (interaction) => {
      */
     const command = interaction.client.commands.get(interaction.commandName);
 
+    const client = interaction.client;
+
     if (!command) {
-        console.error(`El comando ${interaction.commandName} no existe.`);
+        await interaction.followUp({
+            content: '¡El comando no existe!',
+            ephemeral: true
+        });
         return;
     }
 
     try {
         await command.execute(interaction);
     } catch (error) {
-        console.error(error);
+        client.logger.error(error);
         if (interaction.replied || interaction.deferred) {
             await interaction.followUp({
                 content: '¡Ha ocurrido un error ejecutando el comando!',

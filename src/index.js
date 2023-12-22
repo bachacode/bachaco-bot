@@ -12,6 +12,8 @@ const player = new GatoPlayer(client, __dirname);
 player.once('debug', (message) => {
     console.log(message);
 });
+
+client.run();
 // let tracks = null;
 
 // client.on(Events.MessageReactionAdd, async (reaction, user) => {

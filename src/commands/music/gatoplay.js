@@ -62,9 +62,9 @@ module.exports = {
                 nodeOptions: {
                     leaveOnEmpty: true,
                     leaveOnEmptyCooldown: 30_000,
-                    leaveOnEnd: false,
+                    leaveOnEnd: true,
                     leaveOnEndCooldown: 30_000,
-                    leaveOnStop: false,
+                    leaveOnStop: true,
                     leaveOnStopCooldown: 30_000,
                     defaultVolume: 50,
                     maxQueueSize: 10_000,
