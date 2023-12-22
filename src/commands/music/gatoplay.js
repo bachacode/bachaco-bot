@@ -61,11 +61,11 @@ module.exports = {
             await player.play(channel, result, {
                 nodeOptions: {
                     leaveOnEmpty: true,
-                    leaveOnEmptyCooldown: 30_000,
+                    leaveOnEmptyCooldown: 300_000,
                     leaveOnEnd: true,
-                    leaveOnEndCooldown: 30_000,
+                    leaveOnEndCooldown: 300_000,
                     leaveOnStop: false,
-                    leaveOnStopCooldown: 30_000,
+                    leaveOnStopCooldown: 300_000,
                     defaultVolume: 50,
                     maxQueueSize: 10_000,
                     maxHistorySize: 1_000,
