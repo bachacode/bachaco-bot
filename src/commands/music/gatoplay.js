@@ -64,7 +64,7 @@ module.exports = {
                     leaveOnEmptyCooldown: 30_000,
                     leaveOnEnd: true,
                     leaveOnEndCooldown: 30_000,
-                    leaveOnStop: true,
+                    leaveOnStop: false,
                     leaveOnStopCooldown: 30_000,
                     defaultVolume: 50,
                     maxQueueSize: 10_000,
