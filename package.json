@@ -1,43 +1,44 @@
 {
-  "name": "bachaco-bot",
-  "version": "1.0.0",
-  "main": "src/app.js",
-  "type": "commonjs",
-  "scripts": {
-    "start": "node src/index.js",
-    "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bachacode/bachaco-bot.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@discord-player/extractor": "^4.4.5",
-    "@discordjs/opus": "^0.9.0",
-    "axios": "^1.4.0",
-    "colors": "^1.4.0",
-    "discord-player": "^6.6.6",
-    "discord.js": "^14.11.0",
-    "dotenv": "^16.1.4",
-    "express": "^4.18.2",
-    "ffmpeg-static": "^5.1.0",
-    "mediaplex": "^0.0.9",
-    "moment": "^2.29.4",
-    "needle": "^3.2.0",
-    "winston": "^3.11.0",
-    "youtube-ext": "^1.1.16"
-  },
-  "devDependencies": {
-    "@types/node": "^20.3.1",
-    "eslint": "^8.42.0",
-    "eslint-config-standard": "^17.1.0",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-n": "^16.0.0",
-    "eslint-plugin-promise": "^6.1.1",
-    "prettier": "2.8.8"
-  }
+    "name": "bachaco-bot",
+    "version": "1.0.0",
+    "main": "src/app.js",
+    "type": "commonjs",
+    "scripts": {
+        "start": "node src/index.js",
+        "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+        "format": "prettier --write src/",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bachacode/bachaco-bot.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@discord-player/extractor": "^4.4.5",
+        "@discordjs/opus": "^0.9.0",
+        "axios": "^1.4.0",
+        "colors": "^1.4.0",
+        "discord-player": "^6.6.6",
+        "discord.js": "^14.11.0",
+        "dotenv": "^16.1.4",
+        "express": "^4.18.2",
+        "ffmpeg-static": "^5.1.0",
+        "mediaplex": "^0.0.9",
+        "moment": "^2.29.4",
+        "needle": "^3.2.0",
+        "winston": "^3.11.0",
+        "youtube-ext": "^1.1.16"
+    },
+    "devDependencies": {
+        "@types/node": "^20.3.1",
+        "eslint": "^8.42.0",
+        "eslint-config-standard": "^17.1.0",
+        "eslint-plugin-import": "^2.27.5",
+        "eslint-plugin-n": "^16.0.0",
+        "eslint-plugin-promise": "^6.1.1",
+        "prettier": "2.8.8"
+    }
 }
+
