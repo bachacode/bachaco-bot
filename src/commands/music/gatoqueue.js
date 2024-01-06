@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player');
-const { paginate } = require('../../helpers/paginate');
+const paginate = require('../../helpers/paginate');
 module.exports = {
     data: new SlashCommandBuilder().setName('gatoqueue').setDescription('Replies with GatoPong!'),
     async execute(interaction) {

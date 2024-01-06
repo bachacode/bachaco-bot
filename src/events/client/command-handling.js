@@ -8,16 +8,14 @@ const { Events } = require('discord.js');
  */
 const execute = async (interaction) => {
     if (!interaction.isChatInputCommand()) return;
-
+    const client = interaction.client;
     /**
      * @type {import('../../types').SlashCommand}
      */
-    const command = interaction.client.commands.get(interaction.commandName);
-
-    const client = interaction.client;
+    const command = client.commands.get(interaction.commandName);
 
     if (!command) {
-        await interaction.followUp({
+        await interaction.reply({
             content: '¡El comando no existe!',
             ephemeral: true
         });

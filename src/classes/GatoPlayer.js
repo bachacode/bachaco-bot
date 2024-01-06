@@ -3,8 +3,8 @@ const path = require('path');
 const fs = require('fs');
 
 class GatoPlayer extends Player {
-    constructor(client, root) {
-        super(client);
+    constructor(client, options = {}, root) {
+        super(client, options);
         this.logger = client.logger;
         this.extractors.loadDefault();
         this.root = root;
