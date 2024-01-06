@@ -54,9 +54,11 @@ const execute = async (interaction) => {
     if (!result?.tracks.length && query.includes('?list=')) {
         return interaction.editReply('¡No se pueden reproducir mix generados por youtube 💀💀💀');
     }
-    // if (result.playlist == null && result.tracks[0].metadata.nsfw) {
-    //     return interaction.editReply('La canción es NSFW 💀💀💀');
-    // }
+
+    if (result.playlist == null && result.tracks[0].metadata.nsfw) {
+        return interaction.editReply('La canción es NSFW 💀💀💀');
+    }
+
     if (!result?.tracks.length) {
         return interaction.editReply('No se encontró la canción 💀💀💀.');
     }
