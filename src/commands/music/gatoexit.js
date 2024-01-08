@@ -1,11 +1,17 @@
 const { SlashCommandBuilder } = require('discord.js');
+/** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
+
+/** @type {SlashCommandBuilder} */
+const data = new SlashCommandBuilder().setName('gatoexit').setDescription('Saca al bot del canal');
+
 /**
- * Descripción de la variable const.
- * @type {tipo}
+ * @param {ChatInputCommandInteraction} interaction
  */
+const execute = async (interaction) => {
+    await interaction.reply('GatoPong!');
+};
+
 module.exports = {
-    data: new SlashCommandBuilder().setName('gatoexit').setDescription('Replies with GatoPong!'),
-    async execute(interaction) {
-        await interaction.reply('GatoPong!');
-    }
+    data,
+    execute
 };

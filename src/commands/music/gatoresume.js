@@ -1,27 +1,36 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player');
+/** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('gatoresume')
-        .setDescription('gatoc reanuda la canción actual.'),
-    async execute(interaction) {
-        // Revisa si hay una queue activa.
-        const queue = useQueue(interaction.guild.id);
+/** @type {SlashCommandBuilder} */
+const data = new SlashCommandBuilder()
+    .setName('gatoresume')
+    .setDescription('gatoc reanuda la canción actual.');
 
-        const embed = new EmbedBuilder().setColor('DarkAqua');
+/**
+ * @param {ChatInputCommandInteraction} interaction
+ */
+const execute = async (interaction) => {
+    // Revisa si hay una queue activa.
+    const queue = useQueue(interaction.guild.id);
 
-        if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    const embed = new EmbedBuilder().setColor('DarkAqua');
 
-        if (!queue.node.isPaused()) {
-            return interaction.reply({
-                embeds: [embed.setDescription('¡gatoc no esta pausado!')]
-            });
-        }
-        queue.node.setPaused(false);
+    if (!queue) return interaction.reply('No hay nada sonando elmio.');
 
-        await interaction.reply({
-            embeds: [embed.setDescription('¡gatoc ha reanudado la cancion!')]
+    if (!queue.node.isPaused()) {
+        return interaction.reply({
+            embeds: [embed.setDescription('¡gatoc no esta pausado!')]
         });
     }
+    queue.node.setPaused(false);
+
+    await interaction.reply({
+        embeds: [embed.setDescription('¡gatoc ha reanudado la cancion!')]
+    });
+};
+
+module.exports = {
+    data,
+    execute
 };

@@ -4,8 +4,45 @@ const funnyReactions = require('../../Replies/FunnyReactions');
 const funnyReplies = require('../../Replies/FunnyReplies');
 const Replies = require('../../Replies/Replies');
 
-const replies = new Replies(funnyReplies, funnyReactions, funnyMessages);
 /** @typedef {import('discord.js').Message} Message */
+
+const replies = new Replies(funnyReplies, funnyReactions, funnyMessages);
+
+/**
+ *
+ * @param {Message} message
+ * @returns
+ */
+const changeTwitterEmbed = (message) => {
+    if (
+        (message.content.includes('https://twitter.com') ||
+            message.content.includes('https://x.com')) &&
+        message.content.includes('status')
+    ) {
+        const originalString = message.content;
+        let newString = originalString.includes('twitter.com')
+            ? originalString.replace('twitter.com', 'vxtwitter.com')
+            : originalString.replace('x.com', 'vxtwitter.com');
+        if (newString.includes('/photo')) {
+            newString = newString.split('/photo')[0];
+        }
+        const authorMsg = ` by <@${message.author.id}>`;
+        message.delete().then((message) => {
+            message.channel
+                .send(newString)
+                .then((message) => {
+                    message.channel.send({
+                        content: authorMsg,
+                        allowedMentions: { users: [] }
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error: ', error);
+                });
+        });
+    }
+};
+
 /**
  *
  * @param {Message} message
@@ -25,33 +62,7 @@ const execute = async (message) => {
 
     // Twitter vx
     if (message.client.vxPrefix === true) {
-        if (
-            (message.content.includes('https://twitter.com') ||
-                message.content.includes('https://x.com')) &&
-            message.content.includes('status')
-        ) {
-            const originalString = message.content;
-            let newString = originalString.includes('twitter.com')
-                ? originalString.replace('twitter.com', 'vxtwitter.com')
-                : originalString.replace('x.com', 'vxtwitter.com');
-            if (newString.includes('/photo')) {
-                newString = newString.split('/photo')[0];
-            }
-            const authorMsg = ` by <@${message.author.id}>`;
-            message.delete().then((message) => {
-                message.channel
-                    .send(newString)
-                    .then((message) => {
-                        message.channel.send({
-                            content: authorMsg,
-                            allowedMentions: { users: [] }
-                        });
-                    })
-                    .catch((error) => {
-                        console.error('Error: ', error);
-                    });
-            });
-        }
+        changeTwitterEmbed(message);
     }
 };
 
