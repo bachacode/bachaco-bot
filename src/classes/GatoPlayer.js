@@ -19,9 +19,9 @@ class GatoPlayer extends Player {
             const event = require(filePath);
             if ('type' in event && 'once' in event && 'execute' in event) {
                 if (event.once) {
-                    this.once(event.type, event.execute);
+                    this.events.once(event.type, event.execute);
                 } else {
-                    this.on(event.type, event.execute);
+                    this.events.on(event.type, event.execute);
                 }
                 this.logger.info('Player Event Loaded: ' + file.split('.')[0]);
             } else {
