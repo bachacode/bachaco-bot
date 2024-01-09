@@ -8,7 +8,8 @@ const data = new SlashCommandBuilder().setName('gatoping').setDescription('Repli
  * @param {ChatInputCommandInteraction} interaction
  */
 const execute = async (interaction) => {
-    await interaction.reply('GatoPong!');
+    const clientLatency = interaction.client.ws.ping.toFixed(0);
+    await interaction.reply(`GatoPong! con ${clientLatency}ms`);
 };
 
 module.exports = {
