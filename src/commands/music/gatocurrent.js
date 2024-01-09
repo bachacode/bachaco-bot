@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player');
+const embedOptions = require('../../config/embedOptions');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
@@ -25,7 +26,7 @@ const execute = async (interaction) => {
                 .setURL(currentSong.url)
                 .setDescription(`🎶 | Esta sonando **${currentSong.title}.**`)
                 .setThumbnail(currentSong.thumbnail)
-                .setColor('DarkAqua')
+                .setColor(embedOptions.colors.default)
         ]
     });
 };

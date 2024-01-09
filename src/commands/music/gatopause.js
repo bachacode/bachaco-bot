@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player');
+const embedOptions = require('../../config/embedOptions');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
@@ -14,21 +15,28 @@ const execute = async (interaction) => {
     // Revisa si hay una queue activa.
     const queue = useQueue(interaction.guild.id);
 
-    const embed = new EmbedBuilder().setColor('DarkAqua');
+    const embed = new EmbedBuilder();
 
     if (!queue) return interaction.reply('No hay nada sonando elmio.');
 
+    await interaction.deferReply();
     // Pausa o reanuda la cola
     queue.node.setPaused(!queue.node.isPaused());
-    if (queue.node.isPaused()) {
-        return interaction.reply({
-            embeds: [embed.setDescription('¡Gatoc ha sido pausado!')]
-        });
-    } else {
-        await interaction.reply({
-            embeds: [embed.setDescription('¡Gatoc ha sido reanudado!')]
-        });
-    }
+
+    const currentSong = queue.currentTrack;
+
+    const embedDescription = queue.node.isPaused()
+        ? `🎶 | Se ha pausado la canción: **${currentSong.title}.**`
+        : `🎶 | Se ha reanudado la canción: **${currentSong.title}.**`;
+
+    embed
+        .setDescription(embedDescription)
+        .setThumbnail(currentSong.thumbnail)
+        .setColor(embedOptions.colors.default);
+
+    await interaction.editReply({
+        embeds: [embed]
+    });
 };
 
 module.exports = {

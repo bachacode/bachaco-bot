@@ -1,5 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useMainPlayer, useQueue } = require('discord-player');
+const getQueryData = require('../../helpers/getQueryData');
+const playerOptions = require('../../config/playerOptions');
+const embedOptions = require('../../config/embedOptions');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
@@ -28,30 +31,21 @@ const execute = async (interaction) => {
         return interaction.reply('Ya estoy en otro canal de voz.');
     }
 
-    let query = interaction.options.getString('query', true);
-    let queryIndex = null;
     // Limpia el query
-    if (query.includes('&list=') && query.includes('watch?v=')) {
-        query = query.replace(/watch\?v=[^&]+/, 'playlist');
-        query = query.replace(/playlist&/, 'playlist?');
-        if (query.includes('&index=')) {
-            queryIndex = query.match(/&index=(\d+)/)[1];
-            query = query.replace(/&index=\d+/, '');
-        }
-    }
+    const { url, queryIndex } = getQueryData(interaction.options.getString('query', true));
 
     await interaction.deferReply();
 
-    const result = await player.search(query);
+    const result = await player.search(url);
     // Si tiene index coloca de primero la canción del index
-    if (result.tracks.length > 0 && query.includes('?list=') && queryIndex != null) {
+    if (result.tracks.length > 0 && url.includes('?list=') && queryIndex != null) {
         for (let i = 0; i < queryIndex - 1; i++) {
             result.tracks.shift();
         }
     }
 
     // Guard Statements
-    if (!result?.tracks.length && query.includes('?list=')) {
+    if (!result?.tracks.length && url.includes('?list=')) {
         return interaction.editReply('¡No se pueden reproducir mix generados por youtube 💀💀💀');
     }
 
@@ -62,30 +56,10 @@ const execute = async (interaction) => {
     if (!result?.tracks.length) {
         return interaction.editReply('No se encontró la canción 💀💀💀.');
     }
-
     try {
         await player.play(channel, result, {
             nodeOptions: {
-                leaveOnEmpty: true,
-                leaveOnEmptyCooldown: 300_000,
-                leaveOnEnd: true,
-                leaveOnEndCooldown: 300_000,
-                leaveOnStop: false,
-                leaveOnStopCooldown: 300_000,
-                defaultVolume: 50,
-                maxQueueSize: 10_000,
-                maxHistorySize: 1_000,
-                bufferingTimeout: 3_000,
-                connectionTimeout: 20_000,
-                skipOnNoStream: true,
-                progressBar: {
-                    length: 14,
-                    timecodes: false,
-                    separator: '┃',
-                    indicator: '🔘',
-                    leftChar: '▬',
-                    rightChar: '▬'
-                },
+                ...playerOptions,
                 metadata: {
                     channel: interaction.channel,
                     client: interaction.guild.members.me,
@@ -104,7 +78,7 @@ const execute = async (interaction) => {
                             `🎶 | Se ha puesto **${result.tracks[0].title}** en la cola.`
                         )
                         .setThumbnail(result.tracks[0].thumbnail)
-                        .setColor('DarkAqua')
+                        .setColor(embedOptions.colors.default)
                 ]
             });
         } else {
@@ -117,14 +91,18 @@ const execute = async (interaction) => {
                             `🎶 | Se ha puesto la playlist **${result.playlist.title}**.`
                         )
                         .setThumbnail(result.tracks[0].thumbnail)
-                        .setColor('DarkAqua')
+                        .setColor(embedOptions.colors.default)
                 ]
             });
         }
     } catch (error) {
-        console.error(error);
+        player.logger.error(error);
         await interaction.editReply({
-            content: '¡Ha ocurrido un error al poner la canción!\n'
+            embeds: [
+                new EmbedBuilder()
+                    .setDescription('¡Ha ocurrido un error al poner la canción!')
+                    .setColor(embedOptions.colors.error)
+            ]
         });
     }
 };

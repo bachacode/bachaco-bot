@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useQueue } = require('discord-player');
+const embedOptions = require('../../config/embedOptions');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
@@ -24,11 +25,11 @@ const execute = async (interaction) => {
                 new EmbedBuilder()
                     .setDescription(`Se ha saltado **${currentSong.title}**`)
                     .setThumbnail(currentSong.thumbnail)
-                    .setColor('DarkAqua')
+                    .setColor(embedOptions.colors.default)
             ]
         });
     } catch (error) {
-        console.error(error);
+        interaction.client.logger.error(error);
         await interaction.editReply({
             content: '¡Ha ocurrido un error al saltar la canción!\n'
         });
