@@ -5,7 +5,7 @@
  * @returns
  */
 const paginate = (array, pageSize) => {
-    const paginatedObject = {
+    const pages = {
         data: [],
         pageSize,
         currentPage: 0,
@@ -23,11 +23,11 @@ const paginate = (array, pageSize) => {
             }
         }
     };
-    for (let i = 0; i < array.length; i += paginatedObject.pageSize) {
-        const page = array.slice(i, i + paginatedObject.pageSize);
-        paginatedObject.data.push(page);
+    for (let i = 0; i < array.length; i += pages.pageSize) {
+        const page = array.slice(i, i + pages.pageSize);
+        pages.data.push(page);
     }
-    return paginatedObject;
+    return pages;
 };
 
 module.exports = paginate;

@@ -1,4 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const {
+    SlashCommandBuilder,
+    EmbedBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ActionRowBuilder
+} = require('discord.js');
 const { useQueue } = require('discord-player');
 const paginate = require('../../helpers/paginate');
 
@@ -14,23 +20,44 @@ const data = new SlashCommandBuilder()
  */
 const execute = async (interaction) => {
     const queue = useQueue(interaction.guild.id);
+
+    if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    if (queue.tracks.toArray() === 0) return interaction.reply('No hay canciones en cola');
+
     const currentTrack = queue.currentTrack;
     const tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
     let message = '';
 
     message += `**[0]** ${currentTrack.title}\n`;
+
+    const page = tracks.data[tracks.currentPage];
+
     for (let index = 0; index < 10; index++) {
-        message += `**[${index + 1}]** ${tracks.data[0][index].title}\n`;
+        const songNumber = (index + 1) * (tracks.currentPage + 1);
+        if (!page[index]) continue;
+        message += `**[${songNumber}]** ${page[index].title}\n`;
     }
 
-    const embeddedMessage = {
-        embeds: [new EmbedBuilder().setTitle('Gato Cola').setDescription(message)]
-    };
+    const previous = new ButtonBuilder()
+        .setCustomId('previous')
+        .setLabel('patra')
+        .setEmoji('<:tobi:716441157458198579>')
+        .setStyle(ButtonStyle.Primary)
+        .setDisabled(tracks.currentPage === 0);
 
-    await interaction.reply(embeddedMessage);
-    const messageSent = await interaction.fetchReply();
-    await messageSent.react('<:gatoC:957421664738639872>');
-    await messageSent.react('<:tobi:716441157458198579>');
+    const next = new ButtonBuilder()
+        .setCustomId('next')
+        .setLabel('palante')
+        .setEmoji('<:gatoC:957421664738639872>')
+        .setStyle(ButtonStyle.Primary)
+        .setDisabled(tracks.currentPage === tracks.data.length);
+
+    const row = new ActionRowBuilder().addComponents(previous, next);
+
+    await interaction.reply({
+        embeds: [new EmbedBuilder().setTitle('Gato Cola').setDescription(message)],
+        components: [row]
+    });
 };
 
 module.exports = {
