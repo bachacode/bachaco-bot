@@ -1,6 +1,5 @@
 const { useQueue } = require('discord-player');
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const embedOptions = require('../../config/embedOptions');
+const { SlashCommandBuilder } = require('discord.js');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
@@ -16,13 +15,7 @@ const execute = async (interaction) => {
 
     queue.delete();
 
-    await interaction.reply({
-        embeds: [
-            new EmbedBuilder()
-                .setDescription('<:sadcheems:869742943425151087>')
-                .setColor(embedOptions.colors.default)
-        ]
-    });
+    await interaction.reply('<:sadcheems:869742943425151087>');
 };
 
 module.exports = {
