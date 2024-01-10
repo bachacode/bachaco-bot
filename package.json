@@ -7,7 +7,7 @@
         "start": "NODE_ENV=production node src/index.js",
         "deploy-commands": "NODE_ENV=production node src/register-commands.js",
         "deploy-commands-dev": "NODE_ENV=development node src/register-commands.js",
-        "clear-commands-dev": "NODE_ENV=development CLEAR=true node src/register-commands.js",
+        "delete-commands-dev": "NODE_ENV=development node src/delete-commands.js",
         "dev": "node src/index.js",
         "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
         "format": "prettier --write src/",
