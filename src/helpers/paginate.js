@@ -4,7 +4,7 @@
  * @param {number} pageSize
  * @returns
  */
-const paginate = (array, pageSize) => {
+const paginate = (array, pageSize = 10) => {
     const pages = {
         data: [],
         pageSize,
@@ -20,6 +20,11 @@ const paginate = (array, pageSize) => {
         goNextPage() {
             if (this.currentPage < this.data.length) {
                 this.currentPage++;
+            }
+        },
+        goToPage(page) {
+            if (page < this.data.length && page > 0) {
+                this.currentPage = page;
             }
         }
     };

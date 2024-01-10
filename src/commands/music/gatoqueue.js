@@ -7,6 +7,7 @@ const {
 } = require('discord.js');
 const { useQueue } = require('discord-player');
 const paginate = require('../../helpers/paginate');
+const embedOptions = require('../../config/embedOptions');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
@@ -30,7 +31,7 @@ const execute = async (interaction) => {
 
     message += `**[0]** ${currentTrack.title}\n`;
 
-    const page = tracks.data[tracks.currentPage];
+    const page = tracks.getCurrentPageData();
 
     for (let index = 0; index < 10; index++) {
         const songNumber = (index + 1) * (tracks.currentPage + 1);
@@ -41,21 +42,26 @@ const execute = async (interaction) => {
     const previous = new ButtonBuilder()
         .setCustomId('previous')
         .setLabel('patra')
-        .setEmoji('<:tobi:716441157458198579>')
+        .setEmoji('<:miau:800244696349802537>')
         .setStyle(ButtonStyle.Primary)
         .setDisabled(tracks.currentPage === 0);
 
     const next = new ButtonBuilder()
         .setCustomId('next')
         .setLabel('palante')
-        .setEmoji('<:gatoC:957421664738639872>')
+        .setEmoji('<:dwayne:1050074917011456090>')
         .setStyle(ButtonStyle.Primary)
         .setDisabled(tracks.currentPage === tracks.data.length);
 
     const row = new ActionRowBuilder().addComponents(previous, next);
 
     await interaction.reply({
-        embeds: [new EmbedBuilder().setTitle('Gato Cola').setDescription(message)],
+        embeds: [
+            new EmbedBuilder()
+                .setTitle('Gato Cola - Pag. 1')
+                .setDescription(message)
+                .setColor(embedOptions.colors.default)
+        ],
         components: [row]
     });
 };
