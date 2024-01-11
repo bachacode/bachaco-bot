@@ -1,20 +1,36 @@
-const {
-    SlashCommandBuilder,
-    EmbedBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    ActionRowBuilder
-} = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder } = require('discord.js');
 const { useQueue } = require('discord-player');
 const paginate = require('../../helpers/paginate');
 const embedOptions = require('../../config/embedOptions');
+const previousButton = require('../../components/gatoqueue/previousButton');
+const nextButton = require('../../components/gatoqueue/nextButton');
+const refreshButton = require('../../components/gatoqueue/refreshButton');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
+/** @typedef {import('discord-player').Track} Track */
 
 /** @type {SlashCommandBuilder} */
 const data = new SlashCommandBuilder()
     .setName('gatoqueue')
     .setDescription('Replies with GatoPong!');
+
+/**
+ *
+ * @param {Track[]} page
+ * @param {Track} currentTrack
+ * @param {number} currentPage
+ * @returns {string}
+ */
+const getQueueMessage = (page, currentTrack, currentPage) => {
+    let message = `**[Esta sonando]** ${currentTrack.title}\n----------------------------------------\n`;
+
+    page.forEach((track, i) => {
+        const songNumber = i + 1 + currentPage * 10;
+        message += `**[${songNumber}]** ${track.title}\n`;
+    });
+
+    return message;
+};
 
 /**
  * @param {ChatInputCommandInteraction} interaction
@@ -23,45 +39,29 @@ const execute = async (interaction) => {
     const queue = useQueue(interaction.guild.id);
 
     if (!queue) return interaction.reply('No hay nada sonando elmio.');
-    if (queue.tracks.toArray() === 0) return interaction.reply('No hay canciones en cola');
+    if (queue.tracks.toArray().length === 0) return interaction.reply('No hay canciones en cola');
 
     const currentTrack = queue.currentTrack;
     const tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
-    let message = '';
-
-    message += `**[0]** ${currentTrack.title}\n`;
 
     const page = tracks.getCurrentPageData();
 
-    for (let index = 0; index < 10; index++) {
-        const songNumber = (index + 1) * (tracks.currentPage + 1);
-        if (!page[index]) continue;
-        message += `**[${songNumber}]** ${page[index].title}\n`;
-    }
+    const message = getQueueMessage(page, currentTrack, tracks.currentPage);
 
-    const previous = new ButtonBuilder()
-        .setCustomId('previous')
-        .setLabel('patra')
-        .setEmoji('<:miau:800244696349802537>')
-        .setStyle(ButtonStyle.Primary)
-        .setDisabled(tracks.currentPage === 0);
+    const previous = previousButton(tracks.currentPage === 0);
+    const next = nextButton(tracks.currentPage === tracks.data.length - 1);
+    const refresh = refreshButton();
+    const row = new ActionRowBuilder().addComponents(previous, next, refresh);
 
-    const next = new ButtonBuilder()
-        .setCustomId('next')
-        .setLabel('palante')
-        .setEmoji('<:dwayne:1050074917011456090>')
-        .setStyle(ButtonStyle.Primary)
-        .setDisabled(tracks.currentPage === tracks.data.length);
+    const embedTitle = `Gato Cola - Pag. ${tracks.currentPage + 1}`;
 
-    const row = new ActionRowBuilder().addComponents(previous, next);
+    const embed = new EmbedBuilder()
+        .setTitle(embedTitle)
+        .setDescription(message)
+        .setColor(embedOptions.colors.default);
 
     await interaction.reply({
-        embeds: [
-            new EmbedBuilder()
-                .setTitle('Gato Cola - Pag. 1')
-                .setDescription(message)
-                .setColor(embedOptions.colors.default)
-        ],
+        embeds: [embed],
         components: [row]
     });
 };
@@ -70,3 +70,5 @@ module.exports = {
     data,
     execute
 };
+
+module.exports.getQueueMessage = getQueueMessage;

@@ -1,17 +1,62 @@
 // const { useMainPlayer, useQueue } = require('discord-player');
 const { useQueue } = require('discord-player');
-const {
-    Events,
-    ButtonBuilder,
-    ButtonStyle,
-    ActionRowBuilder,
-    EmbedBuilder
-} = require('discord.js');
+const { Events, ActionRowBuilder, EmbedBuilder } = require('discord.js');
 const paginate = require('../../helpers/paginate');
 const embedOptions = require('../../config/embedOptions');
-// const paginate = require('../../helpers/paginate');
+const previousButton = require('../../components/gatoqueue/previousButton');
+const nextButton = require('../../components/gatoqueue/nextButton');
+const { getQueueMessage } = require('../../commands/music/gatoqueue');
+const refreshButton = require('../../components/gatoqueue/refreshButton');
 
 /** @typedef {import('discord.js').Interaction} Interaction */
+/** @typedef {import('discord.js').ButtonInteraction} ButtonInteraction */
+/**
+ *
+ * @param {ButtonInteraction} interaction
+ * @returns {Promise<Message<boolean>>}
+ */
+const handleQueueButtonInteraction = (interaction) => {
+    const queue = useQueue(interaction.guild.id);
+
+    if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    if (queue.tracks.toArray() === 0) return interaction.reply('No hay canciones en cola');
+
+    const currentTrack = queue.currentTrack;
+    const tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
+    const oldPage = interaction.message.embeds[0].title.match(/Pag\. (\d+)/)[1];
+    let contentMsg = '';
+    // Check direction
+    if (interaction.customId === 'previous') {
+        tracks.goToPage(oldPage - 1 - 1);
+    } else if (interaction.customId === 'next') {
+        tracks.goToPage(oldPage - 1 + 1);
+    } else if (interaction.customId === 'refresh') {
+        contentMsg = '¡Se ha actualizado la cola!';
+    }
+
+    const page = tracks.getCurrentPageData();
+
+    const message = getQueueMessage(page, currentTrack, tracks.currentPage);
+
+    const embedTitle = `Gato Cola - Pag. ${tracks.currentPage + 1}`;
+
+    const previous = previousButton(tracks.currentPage === 0);
+    const next = nextButton(tracks.currentPage === tracks.data.length - 1);
+    const refresh = refreshButton();
+    const row = new ActionRowBuilder().addComponents(previous, next, refresh);
+
+    return interaction.update({
+        content: contentMsg,
+        embeds: [
+            new EmbedBuilder()
+                .setTitle(embedTitle)
+                .setDescription(message)
+                .setColor(embedOptions.colors.default)
+        ],
+        components: [row]
+    });
+};
+
 /**
  *
  * @param {Interaction} interaction
@@ -50,83 +95,14 @@ const execute = async (interaction) => {
             }
         }
     } else if (interaction.isButton()) {
-        const queue = useQueue(interaction.guild.id);
-
-        if (!queue) return interaction.reply('No hay nada sonando elmio.');
-        if (queue.tracks.toArray() === 0) return interaction.reply('No hay canciones en cola');
-
-        let message = '';
-        const currentTrack = queue.currentTrack;
-        const tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
-        const oldPage = interaction.message.embeds[0].title.match(/Pag\. (\d+)/)[1];
-        message += `**[Esta sonando]** ${currentTrack.title}\n----------------------------------------\n`;
-
-        // Check direction
-        if (interaction.customId === 'previous') {
-            tracks.goToPage(oldPage - 1 - 1);
-        } else if (interaction.customId === 'next') {
-            tracks.goToPage(oldPage - 1 + 1);
+        // Queue button interactions
+        if (
+            interaction.customId === 'previous' ||
+            interaction.customId === 'next' ||
+            interaction.customId === 'refresh'
+        ) {
+            handleQueueButtonInteraction(interaction);
         }
-
-        const page = tracks.getCurrentPageData();
-
-        for (let index = 0; index < 10; index++) {
-            const songNumber = index + 1 + tracks.currentPage * 10;
-            if (!page[index]) continue;
-            message += `**[${songNumber}]** ${page[index].title}\n`;
-        }
-
-        const embedTitle = `Gato Cola - Pag. ${tracks.currentPage + 1}`;
-
-        const previous = new ButtonBuilder()
-            .setCustomId('previous')
-            .setLabel('patra')
-            .setEmoji('<:miau:800244696349802537>')
-            .setStyle(ButtonStyle.Primary)
-            .setDisabled(tracks.currentPage === 0);
-
-        const next = new ButtonBuilder()
-            .setCustomId('next')
-            .setLabel('palante')
-            .setEmoji('<:dwayne:1050074917011456090>')
-            .setStyle(ButtonStyle.Primary)
-            .setDisabled(tracks.currentPage === tracks.data.length - 1);
-
-        const row = new ActionRowBuilder().addComponents(previous, next);
-
-        interaction.update({
-            embeds: [
-                new EmbedBuilder()
-                    .setTitle(embedTitle)
-                    .setDescription(message)
-                    .setColor(embedOptions.colors.default)
-            ],
-            components: [row]
-        });
-        // const queue = useQueue(interaction.guild.id);
-        // if (!queue) return interaction.reply('No hay nada sonando elmio.');
-        // if (queue.tracks.toArray() === 0) return interaction.reply('No hay canciones en cola');
-        // const currentTrack = queue.currentTrack;
-        // const tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
-        // let message = '';
-        // if (interaction.customId === 'previous') {
-        //     tracks.goPreviousPage();
-        // } else if (interaction.customId === 'next') {
-        //     tracks.goNextPage();
-        // }
-        // previous.setDisabled(tracks.currentPage === 0);
-        // next.setDisabled(tracks.currentPage === tracks.data.length);
-        // const page = tracks.data[tracks.currentPage];
-        // message = '';
-        // for (let index = 0; index < 10; index++) {
-        //     const songNumber = (index + 1) * (tracks.currentPage + 1);
-        //     if (!page[index]) continue;
-        //     message += `**[${songNumber}]** ${page[index].title}\n`;
-        // }
-        // await pressed.update({
-        //     embeds: [new EmbedBuilder().setTitle('Gato Cola').setDescription(message)],
-        //     components: [row]
-        // });
     }
 };
 
