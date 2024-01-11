@@ -8,7 +8,10 @@ const data = new SlashCommandBuilder()
     .setName('gatofirst')
     .setDescription('Mete una canción como la primera de la cola.')
     .addStringOption((option) => {
-        return option.setName('query').setDescription('la URL de la canción.').setRequired(true);
+        return option
+            .setName('song')
+            .setDescription('la URL o posición de la canción.')
+            .setRequired(true);
     });
 
 /**
@@ -21,12 +24,29 @@ const execute = async (interaction) => {
     // Revisa si hay una queue activa.
     if (!queue) return interaction.reply('No hay nada sonando elmio.');
 
-    const query = interaction.options.getString('query', true);
-
+    const query = interaction.options.getString('song', true);
+    let searchResult = '';
+    let song;
     await interaction.deferReply();
 
-    const searchResult = await player.search(query, { requestedBy: interaction.user });
-    const song = searchResult.tracks[0];
+    if (isNaN(query)) {
+        searchResult = await player.search(query, { requestedBy: interaction.user });
+        song = searchResult.tracks[0];
+    } else {
+        const position =
+            queue.tracks.toArray().length >= parseInt(query)
+                ? parseInt(query) - 1
+                : queue.tracks.toArray().length - 1;
+
+        if (position < 0) {
+            return interaction.editReply('La posición no puede ser igual o menor a 0');
+        } else if (position === 0) {
+            return interaction.editReply(
+                'Como vas a poner la primera canción de primera tonto aweonao'
+            );
+        }
+        song = queue.tracks.toArray()[position];
+    }
 
     queue.insertTrack(song, 0);
 
@@ -34,7 +54,7 @@ const execute = async (interaction) => {
         embeds: [
             new EmbedBuilder()
                 .setDescription(
-                    `Se ha insertado **${song.title}** en la primera posición de la cola.`
+                    `Se ha colocado **${song.title}** en la primera posición de la cola.`
                 )
                 .setThumbnail(song.thumbnail)
                 .setColor(embedOptions.colors.default)
