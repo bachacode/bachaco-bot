@@ -33,6 +33,8 @@ const execute = async (interaction) => {
 
     if (position <= 0) return interaction.reply('No puedes insertar una canción en esa posición');
 
+    await interaction.deferReply();
+
     const searchResult = await player.search(query, { requestedBy: interaction.user });
     const song = searchResult.tracks[0];
 
@@ -43,7 +45,7 @@ const execute = async (interaction) => {
         queue.insertTrack(song, position - 1);
     }
 
-    await interaction.reply({
+    await interaction.editReply({
         embeds: [
             new EmbedBuilder()
                 .setDescription(
