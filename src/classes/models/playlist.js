@@ -11,7 +11,8 @@ const playlistSchema = new Schema(
         },
         name: {
             type: SchemaTypes.String,
-            required: true
+            required: true,
+            unique: true
         },
         author: {
             type: SchemaTypes.String,

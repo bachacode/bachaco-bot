@@ -25,7 +25,7 @@ function registerCommandsRecursive(directoryPath, commands = []) {
                 continue;
             }
             registerCommandsRecursive(itemPath, commands);
-        } else if (item.endsWith('.js')) {
+        } else if (!item.endsWith('.subcommand.js')) {
             const command = require(itemPath);
             if ('data' in command && 'execute' in command) {
                 commands.push(command.data.toJSON());

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder } = require('discord.js');
 const embedOptions = require('../../../config/embedOptions');
 const { useDatabase } = require('../../../classes/Database');
 const paginate = require('../../../helpers/paginate');
@@ -7,37 +7,39 @@ const nextButton = require('../../../components/gatoqueue/nextButton');
 const refreshButton = require('../../../components/gatoqueue/refreshButton');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
+/** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
-/** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
-    .setName('gatolist')
-    .setDescription('Listado de las playlists guardadas');
-
-const getPlaylistsMessage = (page, currentPage) => {
-    let message = '';
-    page.forEach((playlist, i) => {
-        const playlistNumber = i + 1 + currentPage * 10;
-        message += `**[${playlistNumber}]** ${playlist.name}\n`;
-    });
-
-    return message;
+/** @param {Subcommand} subcommand */
+const gatoListData = (subcommand) => {
+    return subcommand.setName('list').setDescription('Listado de las playlists guardadas');
 };
 
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const execute = async (interaction) => {
+const gatoListExecute = async (interaction) => {
     const db = useDatabase();
     const client = interaction.client;
+    let reply = '';
     await interaction.deferReply();
 
     try {
         const docs = await db.playlist.find({});
+
+        if (docs.length === 0) {
+            return await interaction.editReply({
+                content: '¡No hay playlists registradas!'
+            });
+        }
+
         const playlists = paginate(docs);
 
         const page = playlists.getCurrentPageData();
 
-        const message = getPlaylistsMessage(page, playlists.currentPage);
+        let message = '';
+        page.forEach((playlist) => {
+            message += `**[${playlist.id}]** ${playlist.name} — creada por: ${playlist.author} \n`;
+        });
 
         const previous = previousButton(playlists.currentPage === 0);
         const next = nextButton(playlists.currentPage === playlists.data.length - 1);
@@ -51,23 +53,27 @@ const execute = async (interaction) => {
             .setDescription(message)
             .setColor(embedOptions.colors.default);
 
-        await interaction.editReply({
+        reply = {
             embeds: [embed],
             components: [row]
-        });
+        };
     } catch (error) {
         client.logger.error(error);
-        await interaction.editReply({
+        reply = {
             embeds: [
                 new EmbedBuilder()
                     .setDescription('¡Ha ocurrido un error al listar las playlists!')
                     .setColor(embedOptions.colors.error)
             ]
-        });
+        };
+    }
+
+    if (interaction.deferred) {
+        await interaction.editReply(reply);
+    } else {
+        await interaction.reply(reply);
     }
 };
 
-module.exports = {
-    data,
-    execute
-};
+module.exports.gatoListData = gatoListData;
+module.exports.gatoListExecute = gatoListExecute;

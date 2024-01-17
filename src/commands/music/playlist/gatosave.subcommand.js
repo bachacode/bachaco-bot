@@ -1,35 +1,35 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { useQueue, serialize, useMainPlayer } = require('discord-player');
+const { EmbedBuilder } = require('discord.js');
+const { serialize, useMainPlayer, useQueue } = require('discord-player');
 const embedOptions = require('../../../config/embedOptions');
 const { useDatabase } = require('../../../classes/Database');
+
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
+/** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
-/** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
-    .setName('gatosave')
-    .setDescription('Guarda canciones en listas')
-    .addSubcommand((subcommand) => {
-        return subcommand
-            .setName('playlist')
-            .setDescription('Guarda una playlist de YouTube')
-            .addStringOption((option) => {
-                return option.setName('query').setDescription('Enlace de la playlist');
-            })
-            .addStringOption((option) => {
-                return option.setName('name').setDescription('Nombre de la playlist (opcional)');
-            });
-    });
+/** @param {Subcommand} subcommand */
+const gatoSaveData = (subcommand) => {
+    return subcommand
+        .setName('save')
+        .setDescription('Guarda una playlist de youtube')
+        .addStringOption((option) => {
+            return option.setName('query').setDescription('Enlace de la playlist');
+        })
+        .addStringOption((option) => {
+            return option.setName('name').setDescription('Nombre de la playlist (opcional)');
+        });
+};
 
 /**
  * @param {ChatInputCommandInteraction} interaction
  * @param {GuildQueue} queue
  */
-const savePlaylist = async (interaction, queue) => {
+const gatoSaveExecute = async (interaction) => {
     const query = interaction.options.getString('query', false);
+    const queue = useQueue(interaction.guild.id);
     const player = useMainPlayer();
     const db = useDatabase();
-    let playlist;
+    let playlist, reply;
 
     if (query !== null) {
         interaction.deferReply();
@@ -53,15 +53,28 @@ const savePlaylist = async (interaction, queue) => {
     const playlistName = interaction.options.getString('name', false) ?? playlist.title;
     const playlistUrl = playlist.url;
     const thumbnail = playlist.tracks[0].thumbnail;
-    // save to db;
-    playlist = await db.playlist.create({
-        name: playlistName,
-        author: interaction.user.id,
-        url: playlistUrl,
-        tracks: serializedTracks
-    });
 
-    const reply = {
+    try {
+        playlist = await db.playlist.create({
+            name: playlistName,
+            author: interaction.user.id,
+            url: playlistUrl,
+            tracks: serializedTracks
+        });
+    } catch (error) {
+        console.error(error);
+
+        reply = {
+            embeds: [
+                new EmbedBuilder()
+                    .setDescription(error)
+                    .setThumbnail(thumbnail)
+                    .setColor(embedOptions.colors.error)
+            ]
+        };
+    }
+
+    reply = {
         embeds: [
             new EmbedBuilder()
                 .setTitle('Enlace a la playlist')
@@ -79,19 +92,5 @@ const savePlaylist = async (interaction, queue) => {
     }
 };
 
-/**
- * @param {ChatInputCommandInteraction} interaction
- */
-const execute = async (interaction) => {
-    // Revisa si hay una queue activa.
-    const queue = useQueue(interaction.guild.id);
-
-    if (interaction.options.getSubcommand() === 'playlist') {
-        savePlaylist(interaction, queue);
-    }
-};
-
-module.exports = {
-    data,
-    execute
-};
+module.exports.gatoSaveData = gatoSaveData;
+module.exports.gatoSaveExecute = gatoSaveExecute;

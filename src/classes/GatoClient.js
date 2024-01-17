@@ -35,7 +35,11 @@ class GatoClient extends Client {
         const items = fs.readdirSync(directoryPath);
         for (const item of items) {
             const itemPath = path.join(directoryPath, item);
-            if (fs.statSync(itemPath).isFile() && item.endsWith('.js')) {
+            if (
+                fs.statSync(itemPath).isFile() &&
+                item.endsWith('.js') &&
+                !item.endsWith('.subcommand.js')
+            ) {
                 const command = require(itemPath);
                 if ('data' in command && 'execute' in command) {
                     this.commands.set(command.data.name, command);
