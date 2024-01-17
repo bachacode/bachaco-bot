@@ -9,13 +9,17 @@ const playlistSchema = new Schema(
             unique: true,
             default: () => randomUUID()
         },
+        name: {
+            type: SchemaTypes.String,
+            required: true
+        },
         author: {
             type: SchemaTypes.String,
             required: true
         },
-        name: {
+        url: {
             type: SchemaTypes.String,
-            required: true
+            require: true
         },
         tracks: {
             type: [SchemaTypes.Mixed],

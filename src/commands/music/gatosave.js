@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useQueue, serialize, useMainPlayer } = require('discord-player');
 const embedOptions = require('../../config/embedOptions');
+const { useDatabase } = require('../../classes/Database');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 
@@ -27,7 +28,9 @@ const data = new SlashCommandBuilder()
 const savePlaylist = async (interaction, queue) => {
     const query = interaction.options.getString('query', false);
     const player = useMainPlayer();
+    const db = useDatabase();
     let playlist;
+
     if (query !== null) {
         interaction.deferReply();
         const searchResult = await player.search(query, { requestedBy: interaction.user });
@@ -37,6 +40,7 @@ const savePlaylist = async (interaction, queue) => {
 
         playlist = searchResult.playlist;
     } else {
+        if (!queue) return interaction.reply('No hay nada sonando elmio.');
         const track = queue.tracks.toArray()[0];
         if (track.playlist === null) {
             return interaction.editReply('La canción actual no pertenece a ninguna playlist');
@@ -47,17 +51,22 @@ const savePlaylist = async (interaction, queue) => {
     const serializedTracks = playlist.tracks.map((track) => serialize(track));
 
     const playlistName = interaction.options.getString('name', false) ?? playlist.title;
+    const playlistUrl = playlist.url;
     const thumbnail = playlist.tracks[0].thumbnail;
     // save to db;
-    // await database.save('my-queue', serializedTracks);
-    console.log(serializedTracks);
+    playlist = await db.playlist.create({
+        name: playlistName,
+        author: interaction.user.id,
+        url: playlistUrl,
+        tracks: serializedTracks
+    });
 
     const reply = {
         embeds: [
             new EmbedBuilder()
                 .setTitle('Enlace a la playlist')
                 .setURL(playlist.url)
-                .setDescription(`📼 | Se ha guardado la playlist: **${playlistName}**`)
+                .setDescription(`📼 | Se ha guardado la playlist: **${playlist.name}**`)
                 .setThumbnail(thumbnail)
                 .setColor(embedOptions.colors.default)
         ]
@@ -76,7 +85,6 @@ const savePlaylist = async (interaction, queue) => {
 const execute = async (interaction) => {
     // Revisa si hay una queue activa.
     const queue = useQueue(interaction.guild.id);
-    if (!queue) return interaction.reply('No hay nada sonando elmio.');
 
     if (interaction.options.getSubcommand() === 'playlist') {
         savePlaylist(interaction, queue);

@@ -24,4 +24,8 @@ class Database {
     // Other methods and properties here
 }
 
-module.exports.db = Database.getInstance();
+function useDatabase() {
+    return Database.getInstance();
+}
+
+module.exports.useDatabase = useDatabase;
