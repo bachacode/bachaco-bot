@@ -15,32 +15,33 @@ if (process.env.NODE_ENV === 'production') {
 
 const guildId = process.env.GUILD_ID;
 
-const commands = [];
+function registerCommandsRecursive(directoryPath, commands = []) {
+    const items = fs.readdirSync(directoryPath);
 
-// Grab all the command folders from the commands directory you created earlier
-const foldersPath = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(foldersPath);
-
-for (const folder of commandFolders) {
-    if (process.env.NODE_ENV === 'production' && folder === 'test') {
-        continue;
-    }
-    // Grab all the command files from the commands directory you created earlier
-    const commandsPath = path.join(foldersPath, folder);
-    const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-    // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
-    for (const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
-        const command = require(filePath);
-        if ('data' in command && 'execute' in command) {
-            commands.push(command.data.toJSON());
-        } else {
-            console.log(
-                `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-            );
+    for (const item of items) {
+        const itemPath = path.join(directoryPath, item);
+        if (fs.statSync(itemPath).isDirectory()) {
+            if (process.env.NODE_ENV === 'production' && item === 'test') {
+                continue;
+            }
+            registerCommandsRecursive(itemPath, commands);
+        } else if (item.endsWith('.js')) {
+            const command = require(itemPath);
+            if ('data' in command && 'execute' in command) {
+                commands.push(command.data.toJSON());
+            } else {
+                console.log(
+                    `[WARNING] The command at ${itemPath} is missing a required "data" or "execute" property.`
+                );
+            }
         }
     }
+
+    return commands;
 }
+
+// Utiliza la función registerCommandsRecursive
+const commands = registerCommandsRecursive(path.join(__dirname, 'commands'));
 
 // Construct and prepare an instance of the REST module
 const rest = new REST().setToken(token);
