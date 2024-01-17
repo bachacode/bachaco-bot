@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { useQueue, serialize, useMainPlayer } = require('discord-player');
-const embedOptions = require('../../config/embedOptions');
-const { useDatabase } = require('../../classes/Database');
+const embedOptions = require('../../../config/embedOptions');
+const { useDatabase } = require('../../../classes/Database');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 
