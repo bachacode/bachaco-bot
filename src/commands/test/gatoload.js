@@ -12,6 +12,21 @@ const data = new SlashCommandBuilder()
         option.setName('command').setDescription('The command to reload.').setRequired(true)
     );
 
+const getCommandPath = (directoryPath, commandFile) => {
+    const items = fs.readdirSync(directoryPath);
+    for (const item of items) {
+        const itemPath = path.join(directoryPath, item);
+        if (fs.statSync(itemPath).isFile() && item === commandFile) {
+            return itemPath;
+        } else if (fs.statSync(itemPath).isDirectory()) {
+            const path = getCommandPath(itemPath, commandFile);
+            if (path) {
+                return path;
+            }
+        }
+    }
+};
+
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
@@ -27,32 +42,20 @@ const execute = async (interaction) => {
     const root = client.root;
 
     const foldersPath = path.join(root, 'commands');
-    const commandFolders = fs.readdirSync(foldersPath);
-    let commandFile = `${command.data.name}.js`;
-    let found = false;
-    // Look on all subfolders in command for the command provided
-    for (const folder of commandFolders) {
-        const commandsPath = path.join(foldersPath, folder);
-        const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-        // Check if a file
-        for (const file of commandFiles) {
-            if (file !== commandFile) continue;
-            commandFile = path.join(commandsPath, file);
-            found = true;
-        }
-    }
+    const commandFile = `${command.data.name}.js`;
+    const commandPath = getCommandPath(foldersPath, commandFile);
 
-    if (!found) {
+    if (!commandPath) {
         return interaction.reply(
             `Ha ocurrido un error encontrando el archivo del comando:  \`${commandName}\`!`
         );
     }
 
-    delete require.cache[require.resolve(commandFile)];
+    delete require.cache[require.resolve(commandPath)];
 
     try {
         interaction.client.commands.delete(command.data.name);
-        const newCommand = require(commandFile);
+        const newCommand = require(commandPath);
         interaction.client.commands.set(newCommand.data.name, newCommand);
         await interaction.reply(`¡El comando \`${newCommand.data.name}\` ha sido actualizado!`);
     } catch (error) {
