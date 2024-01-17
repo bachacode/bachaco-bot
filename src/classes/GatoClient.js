@@ -28,25 +28,25 @@ class GatoClient extends Client {
 
     setCommands() {
         const foldersPath = path.join(this.root, 'commands');
-        const commandFolders = fs.readdirSync(foldersPath);
-        for (const folder of commandFolders) {
-            // Grab all the command files from the commands directory you created earlier
-            const commandsPath = path.join(foldersPath, folder);
-            const commandFiles = fs
-                .readdirSync(commandsPath)
-                .filter((file) => file.endsWith('.js'));
-            // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
-            for (const file of commandFiles) {
-                const filePath = path.join(commandsPath, file);
-                const command = require(filePath);
+        this.registerCommandsInDirectory(foldersPath);
+    }
+
+    registerCommandsInDirectory(directoryPath) {
+        const items = fs.readdirSync(directoryPath);
+        for (const item of items) {
+            const itemPath = path.join(directoryPath, item);
+            if (fs.statSync(itemPath).isFile() && item.endsWith('.js')) {
+                const command = require(itemPath);
                 if ('data' in command && 'execute' in command) {
                     this.commands.set(command.data.name, command);
-                    this.logger.info('Command Loaded: ' + file.split('.')[0]);
+                    this.logger.info('Command Loaded: ' + item.split('.')[0]);
                 } else {
                     this.logger.warn(
-                        `The command at ${filePath} is missing a required "data" or "execute" property.`
+                        `The command at ${itemPath} is missing a required "data" or "execute" property.`
                     );
                 }
+            } else if (fs.statSync(itemPath).isDirectory()) {
+                this.registerCommandsInDirectory(itemPath); // Recursive call for subdirectories
             }
         }
     }
