@@ -16,11 +16,11 @@ const playlistSchema = new Schema(
         },
         author: {
             type: SchemaTypes.String,
-            required: true
+            required: false
         },
         url: {
             type: SchemaTypes.String,
-            require: true
+            require: false
         },
         tracks: {
             type: [SchemaTypes.Mixed],
