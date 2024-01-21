@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('discord.js');
 const { gatoSaveData, gatoSaveExecute } = require('./gatoadd.subcommand');
 const { gatoListData, gatoListExecute } = require('./gatolist.subcommand');
 const { gatoPlayData, gatoPlayExecute } = require('./gatoplay.subcommand');
+const { gatoRemoveData, gatoRemoveExecute } = require('./gatoremove.subcommand');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
@@ -12,7 +13,8 @@ const data = new SlashCommandBuilder()
     .setDescription('Playlist global que todo el mundo puede editar')
     .addSubcommand(gatoSaveData)
     .addSubcommand(gatoListData)
-    .addSubcommand(gatoPlayData);
+    .addSubcommand(gatoPlayData)
+    .addSubcommand(gatoRemoveData);
 
 /**
  * @param {ChatInputCommandInteraction} interaction
@@ -24,6 +26,8 @@ const execute = async (interaction) => {
         gatoListExecute(interaction);
     } else if (interaction.options.getSubcommand() === 'play') {
         gatoPlayExecute(interaction);
+    } else if (interaction.options.getSubcommand() === 'remove') {
+        gatoRemoveExecute(interaction);
     }
 };
 
