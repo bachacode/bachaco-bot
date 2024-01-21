@@ -61,6 +61,11 @@ const gatoSaveExecute = async (interaction) => {
         const total = globalPlaylist.tracks.length;
 
         const track = serialize(result.tracks[0]);
+
+        if (globalPlaylist.tracks.some((zoltraack) => zoltraack.url === track.url)) {
+            return interaction.editReply('Esa canción ya existe en la playlist global');
+        }
+
         globalPlaylist.tracks.push(track);
         await globalPlaylist.save();
 
