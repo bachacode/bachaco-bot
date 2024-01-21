@@ -10,7 +10,15 @@ const playerOptions = require('../../../config/playerOptions');
 
 /** @param {Subcommand} subcommand */
 const gatoPlayData = (subcommand) => {
-    return subcommand.setName('play').setDescription('Reproduce la playlist global');
+    return subcommand
+        .setName('play')
+        .setDescription('Reproduce la playlist global')
+        .addNumberOption((option) => {
+            return option
+                .setName('position')
+                .setDescription('Posición de la que quieres comenzar')
+                .setRequired(false);
+        });
 };
 
 /**
@@ -36,10 +44,12 @@ const gatoPlayExecute = async (interaction) => {
 
     try {
         const globalPlaylist = await db.playlist.findOne({ id: 'global' });
-
+        const position = interaction.options.getNumber('position', false);
         if (globalPlaylist === null) {
             return await interaction.editReply('La playlist global todavia no ha sido creada');
         }
+
+        globalPlaylist.tracks.splice(0, position - 1);
 
         const playlist = player.createPlaylist({
             author: {
