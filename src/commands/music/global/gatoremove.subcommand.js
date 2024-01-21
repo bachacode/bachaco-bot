@@ -25,6 +25,8 @@ const gatoRemoveData = (subcommand) => {
  */
 const gatoRemoveExecute = async (interaction) => {
     const db = useDatabase();
+    let trackNumber = interaction.options.getNumber('position', true) - 1;
+    if (trackNumber < 0) return await interaction.reply('La posición tiene que ser 1 o superior');
     await interaction.deferReply();
 
     const globalPlaylist = await db.playlist.findOne({ id: 'global' }).catch((err) => {
@@ -32,7 +34,10 @@ const gatoRemoveExecute = async (interaction) => {
         return interaction.editReply('error al buscar la playlist');
     });
 
-    const trackNumber = interaction.options.getNumber('position', true) - 1;
+    if (trackNumber >= globalPlaylist.tracks.length) {
+        trackNumber = globalPlaylist.tracks.length - 1;
+    }
+
     const track = globalPlaylist.tracks.splice(trackNumber, 1)[0];
     await globalPlaylist.save();
 
