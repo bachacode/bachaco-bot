@@ -7,9 +7,15 @@ const previousButton = require('../../components/gatoqueue/previousButton');
 const nextButton = require('../../components/gatoqueue/nextButton');
 const { getQueueMessage } = require('../../commands/music/gatoqueue');
 const refreshButton = require('../../components/gatoqueue/refreshButton');
+const { useDatabase } = require('../../classes/Database');
+const { getGlobalMessage } = require('../../commands/music/global/gatolist.subcommand');
+const previousButtonGlobal = require('../../components/gatoglobal/previousButton');
+const nextButtonGlobal = require('../../components/gatoglobal/nextButton');
+const refreshButtonGlobal = require('../../components/gatoglobal/refreshButton');
 
 /** @typedef {import('discord.js').Interaction} Interaction */
 /** @typedef {import('discord.js').ButtonInteraction} ButtonInteraction */
+
 /**
  *
  * @param {ButtonInteraction} interaction
@@ -43,6 +49,51 @@ const handleQueueButtonInteraction = (interaction) => {
     const previous = previousButton(tracks.currentPage === 0);
     const next = nextButton(tracks.currentPage === tracks.data.length - 1);
     const refresh = refreshButton();
+    const row = new ActionRowBuilder().addComponents(previous, next, refresh);
+
+    return interaction.update({
+        content: contentMsg,
+        embeds: [
+            new EmbedBuilder()
+                .setTitle(embedTitle)
+                .setDescription(message)
+                .setColor(embedOptions.colors.default)
+        ],
+        components: [row]
+    });
+};
+
+/**
+ *
+ * @param {ButtonInteraction} interaction
+ * @returns {Promise<Message<boolean>>}
+ */
+const handleGlobalButtonInteraction = async (interaction) => {
+    const db = useDatabase();
+
+    const globalPlaylist = await db.playlist.findOne({ id: 'global' });
+
+    const tracks = paginate(globalPlaylist.tracks, 10); // Converts the queue into a array of tracks
+    const oldPage = interaction.message.embeds[0].title.match(/Pag\. (\d+)/)[1];
+    let contentMsg = '';
+    // Check direction
+    if (interaction.customId === 'previous-global') {
+        tracks.goToPage(oldPage - 1 - 1);
+    } else if (interaction.customId === 'next-global') {
+        tracks.goToPage(oldPage - 1 + 1);
+    } else if (interaction.customId === 'refresh-global') {
+        contentMsg = '¡Se ha actualizado la cola!';
+    }
+
+    const page = tracks.getCurrentPageData();
+
+    const message = getGlobalMessage(page, tracks.currentPage);
+
+    const embedTitle = `Gato Global - Pag. ${tracks.currentPage + 1}`;
+
+    const previous = previousButtonGlobal(tracks.currentPage === 0);
+    const next = nextButtonGlobal(tracks.currentPage === tracks.data.length - 1);
+    const refresh = refreshButtonGlobal();
     const row = new ActionRowBuilder().addComponents(previous, next, refresh);
 
     return interaction.update({
@@ -102,6 +153,12 @@ const execute = async (interaction) => {
             interaction.customId === 'refresh'
         ) {
             handleQueueButtonInteraction(interaction);
+        } else if (
+            interaction.customId === 'previous-global' ||
+            interaction.customId === 'next-global' ||
+            interaction.customId === 'refresh-global'
+        ) {
+            await handleGlobalButtonInteraction(interaction);
         }
     }
 };

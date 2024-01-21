@@ -2,9 +2,9 @@ const { EmbedBuilder, ActionRowBuilder } = require('discord.js');
 const embedOptions = require('../../../config/embedOptions');
 const { useDatabase } = require('../../../classes/Database');
 const paginate = require('../../../helpers/paginate');
-const previousButton = require('../../../components/gatoqueue/previousButton');
-const nextButton = require('../../../components/gatoqueue/nextButton');
-const refreshButton = require('../../../components/gatoqueue/refreshButton');
+const previousButton = require('../../../components/gatoglobal/previousButton');
+const nextButton = require('../../../components/gatoglobal/nextButton');
+const refreshButton = require('../../../components/gatoglobal/refreshButton');
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
@@ -17,65 +17,59 @@ const gatoListData = (subcommand) => {
 };
 
 /**
+ *
+ * @param {Track[]} page
+ * @param {Track} currentTrack
+ * @param {number} currentPage
+ * @returns {string}
+ */
+const getGlobalMessage = (page, currentPage) => {
+    let message = '';
+    page.forEach((track, i) => {
+        const songNumber = i + 1 + currentPage * 10;
+        message += `**[${songNumber}]** ${track.title}\n`;
+    });
+
+    return message;
+};
+
+/**
  * @param {ChatInputCommandInteraction} interaction
  */
 const gatoListExecute = async (interaction) => {
     const db = useDatabase();
-    const client = interaction.client;
-    let reply = '';
+
     await interaction.deferReply();
 
-    try {
-        const docs = await db.playlist.find({});
+    const globalPlaylist = await db.playlist.findOne({ id: 'global' }).catch((err) => {
+        console.log(err);
+        return interaction.editReply('error al buscar la playlist');
+    });
 
-        if (docs.length === 0) {
-            return await interaction.editReply({
-                content: '¡No hay playlists registradas!'
-            });
-        }
+    const tracks = paginate(globalPlaylist.tracks, 10); // Converts the queue into a array of tracks
 
-        const playlists = paginate(docs);
+    const page = tracks.getCurrentPageData();
 
-        const page = playlists.getCurrentPageData();
+    const message = getGlobalMessage(page, tracks.currentPage);
 
-        let message = '';
-        page.forEach((playlist) => {
-            message += `**[${playlist.id}]** ${playlist.name} — creada por: ${playlist.author} \n`;
-        });
+    const previous = previousButton(tracks.currentPage === 0);
+    const next = nextButton(tracks.currentPage === tracks.data.length - 1);
+    const refresh = refreshButton();
+    const row = new ActionRowBuilder().addComponents(previous, next, refresh);
 
-        const previous = previousButton(playlists.currentPage === 0);
-        const next = nextButton(playlists.currentPage === playlists.data.length - 1);
-        const refresh = refreshButton();
-        const row = new ActionRowBuilder().addComponents(previous, next, refresh);
+    const embedTitle = `Gato Global - Pag. ${tracks.currentPage + 1}`;
 
-        const embedTitle = `Gato Playlists - Pag. ${playlists.currentPage + 1}`;
+    const embed = new EmbedBuilder()
+        .setTitle(embedTitle)
+        .setDescription(message)
+        .setColor(embedOptions.colors.default);
 
-        const embed = new EmbedBuilder()
-            .setTitle(embedTitle)
-            .setDescription(message)
-            .setColor(embedOptions.colors.default);
-
-        reply = {
-            embeds: [embed],
-            components: [row]
-        };
-    } catch (error) {
-        client.logger.error(error);
-        reply = {
-            embeds: [
-                new EmbedBuilder()
-                    .setDescription('¡Ha ocurrido un error al listar las playlists!')
-                    .setColor(embedOptions.colors.error)
-            ]
-        };
-    }
-
-    if (interaction.deferred) {
-        await interaction.editReply(reply);
-    } else {
-        await interaction.reply(reply);
-    }
+    await interaction.editReply({
+        embeds: [embed],
+        components: [row]
+    });
 };
 
 module.exports.gatoListData = gatoListData;
 module.exports.gatoListExecute = gatoListExecute;
+module.exports.getGlobalMessage = getGlobalMessage;
