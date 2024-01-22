@@ -49,7 +49,9 @@ const gatoPlayExecute = async (interaction) => {
             return await interaction.editReply('La playlist global todavia no ha sido creada');
         }
 
-        globalPlaylist.tracks.splice(0, position - 1);
+        if (position != null) {
+            globalPlaylist.tracks.splice(0, position - 1);
+        }
 
         const playlist = player.createPlaylist({
             author: {
@@ -110,8 +112,7 @@ const gatoPlayExecute = async (interaction) => {
                         'Ha ocurrido un error inesperado, revise la consola para solucionarlo'
                     )
                     .setColor(embedOptions.colors.error)
-            ],
-            ephemeral: true
+            ]
         });
     }
 };
