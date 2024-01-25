@@ -3,7 +3,6 @@ const { serialize, useMainPlayer, useQueue } = require('discord-player');
 const embedOptions = require('../../../config/embedOptions');
 const { useDatabase } = require('../../../classes/Database');
 const getQueryData = require('../../../helpers/getQueryData');
-const playerOptions = require('../../../config/playerOptions');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
@@ -37,7 +36,7 @@ const gatoInsertExecute = async (interaction) => {
 
     // Limpia el query
     const { url, queryIndex } = getQueryData(interaction.options.getString('query', true));
-    const position = interaction.options.getNumber('position', true);
+    let position = interaction.options.getNumber('position', true);
     await interaction.deferReply();
 
     try {
@@ -71,16 +70,13 @@ const gatoInsertExecute = async (interaction) => {
         await globalPlaylist.save();
 
         if (queue && queue.isPlaying) {
-            player.play(queue.channel, result.tracks[0], {
-                nodeOptions: {
-                    ...playerOptions,
-                    metadata: {
-                        channel: interaction.channel,
-                        client: interaction.guild.members.me,
-                        requestedBy: interaction.user
-                    }
-                }
-            });
+            const queueLength = queue.tracks.toArray().length;
+            if (position >= queueLength) {
+                queue.insertTrack(result.tracks[0], queueLength - 1);
+                position = queueLength;
+            } else {
+                queue.insertTrack(result.tracks[0], position - 1);
+            }
         }
 
         reply = {

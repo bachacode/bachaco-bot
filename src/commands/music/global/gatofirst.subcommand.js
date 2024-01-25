@@ -3,7 +3,6 @@ const { serialize, useMainPlayer, useQueue } = require('discord-player');
 const embedOptions = require('../../../config/embedOptions');
 const { useDatabase } = require('../../../classes/Database');
 const getQueryData = require('../../../helpers/getQueryData');
-const playerOptions = require('../../../config/playerOptions');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
@@ -66,16 +65,7 @@ const gatoFirstExecute = async (interaction) => {
         await globalPlaylist.save();
 
         if (queue && queue.isPlaying) {
-            player.play(queue.channel, result.tracks[0], {
-                nodeOptions: {
-                    ...playerOptions,
-                    metadata: {
-                        channel: interaction.channel,
-                        client: interaction.guild.members.me,
-                        requestedBy: interaction.user
-                    }
-                }
-            });
+            queue.insertTrack(result.tracks[0], 0);
         }
 
         reply = {
