@@ -9,6 +9,7 @@ const {
 } = require('./gatoplay.subcommand');
 const { gatoRemoveData, gatoRemoveExecute } = require('./gatoremove.subcommand');
 const { gatoInsertData, gatoInsertExecute } = require('./gatoinsert.subcommand');
+const { gatoFirstExecute, gatoFirstData } = require('./gatofirst.subcommand');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
@@ -22,24 +23,40 @@ const data = new SlashCommandBuilder()
     .addSubcommand(gatoPlayData)
     .addSubcommand(gatoRemoveData)
     .addSubcommand(gatoRandomData)
-    .addSubcommand(gatoInsertData);
+    .addSubcommand(gatoInsertData)
+    .addSubcommand(gatoFirstData);
 
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
 const execute = async (interaction) => {
-    if (interaction.options.getSubcommand() === 'add') {
-        gatoSaveExecute(interaction);
-    } else if (interaction.options.getSubcommand() === 'list') {
-        gatoListExecute(interaction);
-    } else if (interaction.options.getSubcommand() === 'play') {
-        gatoPlayExecute(interaction);
-    } else if (interaction.options.getSubcommand() === 'remove') {
-        gatoRemoveExecute(interaction);
-    } else if (interaction.options.getSubcommand() === 'randomlocke') {
-        gatoRandomExecute(interaction);
-    } else if (interaction.options.getSubcommand() === 'insert') {
-        gatoInsertExecute(interaction);
+    /*
+    eslint indent: [2, 4, {"SwitchCase": 1}]
+    */
+    switch (interaction.options.getSubcommand()) {
+        case 'add':
+            gatoSaveExecute(interaction);
+            break;
+        case 'list':
+            gatoListExecute(interaction);
+            break;
+        case 'play':
+            gatoPlayExecute(interaction);
+            break;
+        case 'remove':
+            gatoRemoveExecute(interaction);
+            break;
+        case 'randomlocke':
+            gatoRandomExecute(interaction);
+            break;
+        case 'insert':
+            gatoInsertExecute(interaction);
+            break;
+        case 'first':
+            gatoFirstExecute(interaction);
+            break;
+        default:
+            await interaction.reply('No se ha encontrado ese subcomando');
     }
 };
 
