@@ -8,6 +8,7 @@ const {
     gatoRandomData
 } = require('./gatoplay.subcommand');
 const { gatoRemoveData, gatoRemoveExecute } = require('./gatoremove.subcommand');
+const { gatoInsertData, gatoInsertExecute } = require('./gatoinsert.subcommand');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
@@ -20,7 +21,8 @@ const data = new SlashCommandBuilder()
     .addSubcommand(gatoListData)
     .addSubcommand(gatoPlayData)
     .addSubcommand(gatoRemoveData)
-    .addSubcommand(gatoRandomData);
+    .addSubcommand(gatoRandomData)
+    .addSubcommand(gatoInsertData);
 
 /**
  * @param {ChatInputCommandInteraction} interaction
@@ -36,6 +38,8 @@ const execute = async (interaction) => {
         gatoRemoveExecute(interaction);
     } else if (interaction.options.getSubcommand() === 'randomlocke') {
         gatoRandomExecute(interaction);
+    } else if (interaction.options.getSubcommand() === 'insert') {
+        gatoInsertExecute(interaction);
     }
 };
 
