@@ -15,10 +15,7 @@ const gatoSaveData = (subcommand) => {
         .setName('add')
         .setDescription('Añade una canción en la playlist global')
         .addStringOption((option) => {
-            return option
-                .setName('query')
-                .setDescription('Enlace de la playlist')
-                .setRequired(true);
+            return option.setName('query').setDescription('Enlace de la canción').setRequired(true);
         });
 };
 
