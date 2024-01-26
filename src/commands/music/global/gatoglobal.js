@@ -11,6 +11,7 @@ const { gatoRemoveData, gatoRemoveExecute } = require('./gatoremove.subcommand')
 const { gatoInsertData, gatoInsertExecute } = require('./gatoinsert.subcommand');
 const { gatoFirstExecute, gatoFirstData } = require('./gatofirst.subcommand');
 const { gatoSwapData, gatoSwapExecute } = require('./gatoswap.subcommand');
+const { gatoMoveData, gatoMoveExecute } = require('./gatomove.subcommand');
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
@@ -26,7 +27,8 @@ const data = new SlashCommandBuilder()
     .addSubcommand(gatoRandomData)
     .addSubcommand(gatoInsertData)
     .addSubcommand(gatoFirstData)
-    .addSubcommand(gatoSwapData);
+    .addSubcommand(gatoSwapData)
+    .addSubcommand(gatoMoveData);
 
 /**
  * @param {ChatInputCommandInteraction} interaction
@@ -59,6 +61,9 @@ const execute = async (interaction) => {
             break;
         case 'swap':
             gatoSwapExecute(interaction);
+            break;
+        case 'move':
+            gatoMoveExecute(interaction);
             break;
         default:
             await interaction.reply('No se ha encontrado ese subcomando');
