@@ -1,6 +1,6 @@
-const { GatewayIntentBits } = require('discord.js');
+import { GatewayIntentBits } from 'discord.js';
 
-module.exports = {
+export default {
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,

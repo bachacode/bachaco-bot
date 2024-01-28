@@ -1,17 +1,17 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { useQueue } = require('discord-player');
-const embedOptions = require('../../config/embedOptions');
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { useQueue } from 'discord-player';
+import embedOptions from '../../config/embedOptions.js';
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
     .setName('gatocurrent')
     .setDescription('gatoc dice la canción que esta sonando actualmente.');
 
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const execute = async (interaction) => {
+export const execute = async (interaction) => {
     // Revisa si hay una queue activa.
     const queue = useQueue(interaction.guild.id);
 
@@ -29,9 +29,4 @@ const execute = async (interaction) => {
                 .setColor(embedOptions.colors.default)
         ]
     });
-};
-
-module.exports = {
-    data,
-    execute
 };

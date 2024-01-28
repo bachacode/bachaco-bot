@@ -17,4 +17,4 @@ const funnyReplies = [
     { request: 'litio', response: '🐒' }
 ];
 
-module.exports = funnyReplies;
+export default funnyReplies;

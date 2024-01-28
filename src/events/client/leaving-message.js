@@ -1,12 +1,12 @@
-const { EmbedBuilder, Events } = require('discord.js');
-const getRandomInt = require('../../helpers/getRandomInt');
+import { EmbedBuilder, Events } from 'discord.js';
+import getRandomInt from '../../helpers/getRandomInt.js';
 /** @typedef {import('discord.js').GuildMember} GuildMember */
 /** @typedef {import('discord.js').PartialGuildMember} PartialGuildMember */
 /**
  *
  * @param {GuildMember|PartialGuildMember} member
  */
-const execute = async (member) => {
+export const execute = async (member) => {
     const channel = member.client.channels.cache.get('603201649099669526');
     const { user } = member;
 
@@ -32,8 +32,5 @@ const execute = async (member) => {
     });
 };
 
-module.exports = {
-    type: Events.GuildMemberRemove,
-    once: false,
-    execute
-};
+export const type = Events.GuildMemberRemove;
+export const once = false;

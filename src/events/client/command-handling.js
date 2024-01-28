@@ -1,17 +1,27 @@
 // const { useMainPlayer, useQueue } = require('discord-player');
-const { useQueue } = require('discord-player');
-const { Events, ActionRowBuilder, EmbedBuilder } = require('discord.js');
-const paginate = require('../../helpers/paginate');
-const embedOptions = require('../../config/embedOptions');
-const previousButton = require('../../components/gatoqueue/previousButton');
-const nextButton = require('../../components/gatoqueue/nextButton');
-const { getQueueMessage } = require('../../commands/music/gatoqueue');
-const refreshButton = require('../../components/gatoqueue/refreshButton');
-const { useDatabase } = require('../../classes/Database');
-const { getGlobalMessage } = require('../../commands/music/global/gatolist.subcommand');
-const previousButtonGlobal = require('../../components/gatoglobal/previousButton');
-const nextButtonGlobal = require('../../components/gatoglobal/nextButton');
-const refreshButtonGlobal = require('../../components/gatoglobal/refreshButton');
+import { useQueue } from 'discord-player';
+
+import { Events, ActionRowBuilder, EmbedBuilder } from 'discord.js';
+import paginate from '../../helpers/paginate.js';
+import embedOptions from '../../config/embedOptions.js';
+import previousButton from '../../components/gatoqueue/previousButton.js';
+import nextButton from '../../components/gatoqueue/nextButton.js';
+import { getQueueMessage } from '../../commands/music/gatoqueue.js';
+import refreshButton from '../../components/gatoqueue/refreshButton.js';
+import { useDatabase } from '../../classes/Database.js';
+import { getGlobalMessage } from '../../commands/music/global/gatolist.subcommand.js';
+import previousButtonGlobal from '../../components/gatoglobal/previousButton.js';
+import nextButtonGlobal from '../../components/gatoglobal/nextButton.js';
+import refreshButtonGlobal from '../../components/gatoglobal/refreshButton.js';
+
+/**
+ * A Discord Slash Command
+ *
+ * @typedef {{
+ * data: SlashCommandBuilder,
+ * execute: (interaction: ChatInputCommandInteraction) => Promise<void>
+ * }} SlashCommand
+ */
 
 /** @typedef {import('discord.js').Interaction} Interaction */
 /** @typedef {import('discord.js').ButtonInteraction} ButtonInteraction */
@@ -113,11 +123,11 @@ const handleGlobalButtonInteraction = async (interaction) => {
  * @param {Interaction} interaction
  * @returns {void}
  */
-const execute = async (interaction) => {
+export const execute = async (interaction) => {
     if (interaction.isChatInputCommand()) {
         const client = interaction.client;
         /**
-         * @type {import('../../types').SlashCommand}
+         * @type {SlashCommand}
          */
         const command = client.commands.get(interaction.commandName);
 
@@ -163,8 +173,5 @@ const execute = async (interaction) => {
     }
 };
 
-module.exports = {
-    type: Events.InteractionCreate,
-    once: false,
-    execute
-};
+export const type = Events.InteractionCreate;
+export const once = false;

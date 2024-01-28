@@ -1,16 +1,16 @@
-const { EmbedBuilder } = require('discord.js');
-const { serialize, useMainPlayer, useQueue } = require('discord-player');
-const embedOptions = require('../../../config/embedOptions');
-const { useDatabase } = require('../../../classes/Database');
-const getQueryData = require('../../../helpers/getQueryData');
-const playerOptions = require('../../../config/playerOptions');
+import { EmbedBuilder } from 'discord.js';
+import { serialize, useMainPlayer, useQueue } from 'discord-player';
+import embedOptions from '../../../config/embedOptions.js';
+import { useDatabase } from '../../../classes/Database.js';
+import getQueryData from '../../../helpers/getQueryData.js';
+import playerOptions from '../../../config/playerOptions.js';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
 /** @param {Subcommand} subcommand */
-const gatoSaveData = (subcommand) => {
+export const gatoSaveData = (subcommand) => {
     return subcommand
         .setName('add')
         .setDescription('Añade una canción en la playlist global')
@@ -23,7 +23,7 @@ const gatoSaveData = (subcommand) => {
  * @param {ChatInputCommandInteraction} interaction
  * @param {GuildQueue} queue
  */
-const gatoSaveExecute = async (interaction) => {
+export const gatoSaveExecute = async (interaction) => {
     const player = useMainPlayer();
     const db = useDatabase();
     const queue = useQueue(interaction.guild.id);
@@ -120,6 +120,3 @@ const gatoSaveExecute = async (interaction) => {
         return await interaction.reply(reply);
     }
 };
-
-module.exports.gatoSaveData = gatoSaveData;
-module.exports.gatoSaveExecute = gatoSaveExecute;

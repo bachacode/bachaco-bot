@@ -35,4 +35,4 @@ const paginate = (array, pageSize = 10) => {
     return pages;
 };
 
-module.exports = paginate;
+export default paginate;

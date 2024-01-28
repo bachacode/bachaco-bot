@@ -1,15 +1,15 @@
-const { EmbedBuilder } = require('discord.js');
-const { serialize, useMainPlayer, useQueue } = require('discord-player');
-const embedOptions = require('../../../config/embedOptions');
-const { useDatabase } = require('../../../classes/Database');
-const getQueryData = require('../../../helpers/getQueryData');
+import { EmbedBuilder } from 'discord.js';
+import { serialize, useMainPlayer, useQueue } from 'discord-player';
+import embedOptions from '../../../config/embedOptions.js';
+import { useDatabase } from '../../../classes/Database.js';
+import getQueryData from '../../../helpers/getQueryData.js';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
 /** @param {Subcommand} subcommand */
-const gatoFirstData = (subcommand) => {
+export const gatoFirstData = (subcommand) => {
     return subcommand
         .setName('first')
         .setDescription('Añade una canción en la playlist global en la primera posición')
@@ -22,7 +22,7 @@ const gatoFirstData = (subcommand) => {
  * @param {ChatInputCommandInteraction} interaction
  * @param {GuildQueue} queue
  */
-const gatoFirstExecute = async (interaction) => {
+export const gatoFirstExecute = async (interaction) => {
     const player = useMainPlayer();
     const db = useDatabase();
     const queue = useQueue(interaction.guild.id);
@@ -107,6 +107,3 @@ const gatoFirstExecute = async (interaction) => {
         return await interaction.reply(reply);
     }
 };
-
-module.exports.gatoFirstData = gatoFirstData;
-module.exports.gatoFirstExecute = gatoFirstExecute;

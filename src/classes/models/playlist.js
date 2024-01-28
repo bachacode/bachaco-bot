@@ -1,5 +1,5 @@
-const { randomUUID } = require('crypto');
-const { Schema, SchemaTypes, model } = require('mongoose');
+import { randomUUID } from 'crypto';
+import { Schema, SchemaTypes, model } from 'mongoose';
 
 const playlistSchema = new Schema(
     {
@@ -32,4 +32,4 @@ const playlistSchema = new Schema(
     }
 );
 
-module.exports = model('Playlist', playlistSchema);
+export default model('Playlist', playlistSchema);

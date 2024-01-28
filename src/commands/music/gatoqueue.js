@@ -1,16 +1,16 @@
-const { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder } = require('discord.js');
-const { useQueue } = require('discord-player');
-const paginate = require('../../helpers/paginate');
-const embedOptions = require('../../config/embedOptions');
-const previousButton = require('../../components/gatoqueue/previousButton');
-const nextButton = require('../../components/gatoqueue/nextButton');
-const refreshButton = require('../../components/gatoqueue/refreshButton');
+import { SlashCommandBuilder, EmbedBuilder, ActionRowBuilder } from 'discord.js';
+import { useQueue } from 'discord-player';
+import paginate from '../../helpers/paginate.js';
+import embedOptions from '../../config/embedOptions.js';
+import previousButton from '../../components/gatoqueue/previousButton.js';
+import nextButton from '../../components/gatoqueue/nextButton.js';
+import refreshButton from '../../components/gatoqueue/refreshButton.js';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').Track} Track */
 
 /** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
     .setName('gatoqueue')
     .setDescription('Replies with GatoPong!');
 
@@ -21,7 +21,7 @@ const data = new SlashCommandBuilder()
  * @param {number} currentPage
  * @returns {string}
  */
-const getQueueMessage = (page, currentTrack, currentPage) => {
+export const getQueueMessage = (page, currentTrack, currentPage) => {
     let message = `**[Esta sonando]** ${currentTrack.title}\n----------------------------------------\n`;
 
     page.forEach((track, i) => {
@@ -35,7 +35,7 @@ const getQueueMessage = (page, currentTrack, currentPage) => {
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const execute = async (interaction) => {
+export const execute = async (interaction) => {
     const queue = useQueue(interaction.guild.id);
 
     if (!queue) return interaction.reply('No hay nada sonando elmio.');
@@ -65,10 +65,3 @@ const execute = async (interaction) => {
         components: [row]
     });
 };
-
-module.exports = {
-    data,
-    execute
-};
-
-module.exports.getQueueMessage = getQueueMessage;

@@ -1,9 +1,13 @@
-require('dotenv').config();
-const { REST, Routes } = require('discord.js');
-const fs = require('node:fs');
-const path = require('node:path');
+import 'dotenv/config';
+import { REST, Routes } from 'discord.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 let token, clientId;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV === 'production') {
     token = process.env.TOKEN;
@@ -15,18 +19,17 @@ if (process.env.NODE_ENV === 'production') {
 
 const guildId = process.env.GUILD_ID;
 
-function registerCommandsRecursive(directoryPath, commands = []) {
+async function registerCommandsRecursive(directoryPath, commands = []) {
     const items = fs.readdirSync(directoryPath);
-
     for (const item of items) {
-        const itemPath = path.join(directoryPath, item);
+        let itemPath = path.join('file:///', directoryPath, item);
         if (fs.statSync(itemPath).isDirectory()) {
             if (process.env.NODE_ENV === 'production' && item === 'test') {
                 continue;
             }
-            registerCommandsRecursive(itemPath, commands);
+            await registerCommandsRecursive(itemPath, commands);
         } else if (!item.endsWith('.subcommand.js')) {
-            const command = require(itemPath);
+            const command = await import(itemPath);
             if ('data' in command && 'execute' in command) {
                 commands.push(command.data.toJSON());
             } else {
@@ -41,13 +44,10 @@ function registerCommandsRecursive(directoryPath, commands = []) {
 }
 
 // Utiliza la función registerCommandsRecursive
-const commands = registerCommandsRecursive(path.join(__dirname, 'commands'));
 
-// Construct and prepare an instance of the REST module
-const rest = new REST().setToken(token);
-
-// and deploy your commands!
-(async () => {
+registerCommandsRecursive(path.join(__dirname, 'commands')).then(async (commands) => {
+    // Construct and prepare an instance of the REST module
+    const rest = new REST().setToken(token);
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
 
@@ -61,4 +61,4 @@ const rest = new REST().setToken(token);
         // And of course, make sure you catch and log any errors!
         console.error(error);
     }
-})();
+});

@@ -1,16 +1,16 @@
-const { EmbedBuilder, ActionRowBuilder } = require('discord.js');
-const embedOptions = require('../../../config/embedOptions');
-const { useDatabase } = require('../../../classes/Database');
-const paginate = require('../../../helpers/paginate');
-const previousButton = require('../../../components/gatoglobal/previousButton');
-const nextButton = require('../../../components/gatoglobal/nextButton');
-const refreshButton = require('../../../components/gatoglobal/refreshButton');
+import { EmbedBuilder, ActionRowBuilder } from 'discord.js';
+import embedOptions from '../../../config/embedOptions.js';
+import { useDatabase } from '../../../classes/Database.js';
+import paginate from '../../../helpers/paginate.js';
+import previousButton from '../../../components/gatoglobal/previousButton.js';
+import nextButton from '../../../components/gatoglobal/nextButton.js';
+import refreshButton from '../../../components/gatoglobal/refreshButton.js';
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
 /** @param {Subcommand} subcommand */
-const gatoListData = (subcommand) => {
+export const gatoListData = (subcommand) => {
     return subcommand
         .setName('list')
         .setDescription('Listado de las canciones guardadas en la playlist global');
@@ -23,7 +23,7 @@ const gatoListData = (subcommand) => {
  * @param {number} currentPage
  * @returns {string}
  */
-const getGlobalMessage = (page, currentPage) => {
+export const getGlobalMessage = (page, currentPage) => {
     let message = '';
     page.forEach((track, i) => {
         const songNumber = i + 1 + currentPage * 10;
@@ -36,7 +36,7 @@ const getGlobalMessage = (page, currentPage) => {
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const gatoListExecute = async (interaction) => {
+export const gatoListExecute = async (interaction) => {
     const db = useDatabase();
 
     await interaction.deferReply();
@@ -69,7 +69,3 @@ const gatoListExecute = async (interaction) => {
         components: [row]
     });
 };
-
-module.exports.gatoListData = gatoListData;
-module.exports.gatoListExecute = gatoListExecute;
-module.exports.getGlobalMessage = getGlobalMessage;

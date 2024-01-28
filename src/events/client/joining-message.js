@@ -1,10 +1,10 @@
-const { EmbedBuilder, Events } = require('discord.js');
+import { EmbedBuilder, Events } from 'discord.js';
 /** @typedef {import('discord.js').GuildMember} GuildMember */
 /**
  *
  * @param {GuildMember} member
  */
-const execute = async (member) => {
+export const execute = async (member) => {
     const channel = member.client.channels.cache.get('603201649099669526');
     const { user } = member;
     member.roles.add('603340605774626871');
@@ -26,8 +26,5 @@ const execute = async (member) => {
     });
 };
 
-module.exports = {
-    type: Events.GuildMemberAdd,
-    once: false,
-    execute
-};
+export const type = Events.GuildMemberAdd;
+export const once = false;

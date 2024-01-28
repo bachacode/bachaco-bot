@@ -23,4 +23,4 @@ const getQueryData = (query) => {
     };
 };
 
-module.exports = getQueryData;
+export default getQueryData;

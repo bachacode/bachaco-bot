@@ -1,9 +1,14 @@
-require('dotenv').config();
-const clientOptions = require('./config/clientOptions');
-const GatoClient = require('./classes/GatoClient');
-const GatoPlayer = require('./classes/GatoPlayer');
+import 'dotenv/config';
+import clientOptions from './config/clientOptions.js';
+import GatoClient from './classes/GatoClient.js';
+import GatoPlayer from './classes/GatoPlayer.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const token = process.env.NODE_ENV === 'production' ? process.env.TOKEN : process.env.TOKEN_TEST;
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // Create a new client instance
 const client = new GatoClient(clientOptions, __dirname, token);
 
@@ -27,6 +32,7 @@ client.run();
 
 // prevent crash on unhandled promise rejection
 process.on('unhandledRejection', (reason) => {
+    console.log(reason);
     client.logger.error('Unhandled promise rejection:', reason);
 });
 

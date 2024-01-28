@@ -1,6 +1,6 @@
-const { Player } = require('discord-player');
-const path = require('path');
-const fs = require('fs');
+import { Player } from 'discord-player';
+import path from 'path';
+import fs from 'fs';
 
 class GatoPlayer extends Player {
     constructor(client, options = {}, root) {
@@ -11,12 +11,12 @@ class GatoPlayer extends Player {
         this.setEvents();
     }
 
-    setEvents() {
+    async setEvents() {
         const foldersPath = path.join(this.root, 'events', 'player');
         const eventFiles = fs.readdirSync(foldersPath).filter((file) => file.endsWith('.js'));
         for (const file of eventFiles) {
-            const filePath = path.join(foldersPath, file);
-            const event = require(filePath);
+            const filePath = path.join('file:///', foldersPath, file);
+            const event = await import(filePath);
             if ('type' in event && 'once' in event && 'execute' in event) {
                 if (event.once) {
                     this.events.once(event.type, event.execute);
@@ -33,4 +33,4 @@ class GatoPlayer extends Player {
     }
 }
 
-module.exports = GatoPlayer;
+export default GatoPlayer;

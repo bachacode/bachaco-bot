@@ -1,16 +1,16 @@
-const { EmbedBuilder } = require('discord.js');
-const { useMainPlayer, deserialize, useQueue } = require('discord-player');
-const embedOptions = require('../../../config/embedOptions');
-const { useDatabase } = require('../../../classes/Database');
-const playerOptions = require('../../../config/playerOptions');
-const shuffle = require('../../../helpers/shuffle');
+import { EmbedBuilder } from 'discord.js';
+import { useMainPlayer, deserialize, useQueue } from 'discord-player';
+import embedOptions from '../../../config/embedOptions.js';
+import { useDatabase } from '../../../classes/Database.js';
+import playerOptions from '../../../config/playerOptions.js';
+import shuffle from '../../../helpers/shuffle.js';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
 /** @param {Subcommand} subcommand */
-const gatoPlayData = (subcommand) => {
+export const gatoPlayData = (subcommand) => {
     return subcommand
         .setName('play')
         .setDescription('Reproduce la playlist global')
@@ -23,7 +23,7 @@ const gatoPlayData = (subcommand) => {
 };
 
 /** @param {Subcommand} subcommand */
-const gatoRandomData = (subcommand) => {
+export const gatoRandomData = (subcommand) => {
     return subcommand
         .setName('randomlocke')
         .setDescription('Reproduce la playlist global en modo random')
@@ -99,7 +99,7 @@ const getPlaylist = async (interaction, position, channel) => {
  * @param {ChatInputCommandInteraction} interaction
  * @param {GuildQueue} queue
  */
-const gatoPlayExecute = async (interaction) => {
+export const gatoPlayExecute = async (interaction) => {
     const player = useMainPlayer();
     const position = interaction.options.getNumber('position', false);
     const channel = interaction.member.voice.channel;
@@ -154,7 +154,7 @@ const gatoPlayExecute = async (interaction) => {
  * @param {ChatInputCommandInteraction} interaction
  * @param {GuildQueue} queue
  */
-const gatoRandomExecute = async (interaction) => {
+export const gatoRandomExecute = async (interaction) => {
     const player = useMainPlayer();
     const position = interaction.options.getNumber('position', false);
     const channel = interaction.member.voice.channel;
@@ -206,9 +206,3 @@ const gatoRandomExecute = async (interaction) => {
         });
     }
 };
-
-module.exports.gatoPlayData = gatoPlayData;
-module.exports.gatoPlayExecute = gatoPlayExecute;
-
-module.exports.gatoRandomData = gatoRandomData;
-module.exports.gatoRandomExecute = gatoRandomExecute;

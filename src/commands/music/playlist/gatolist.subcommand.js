@@ -1,23 +1,23 @@
-const { EmbedBuilder, ActionRowBuilder } = require('discord.js');
-const embedOptions = require('../../../config/embedOptions');
-const { useDatabase } = require('../../../classes/Database');
-const paginate = require('../../../helpers/paginate');
-const previousButton = require('../../../components/gatoqueue/previousButton');
-const nextButton = require('../../../components/gatoqueue/nextButton');
-const refreshButton = require('../../../components/gatoqueue/refreshButton');
+import { EmbedBuilder, ActionRowBuilder } from 'discord.js';
+import embedOptions from '../../../config/embedOptions.js';
+import { useDatabase } from '../../../classes/Database.js';
+import paginate from '../../../helpers/paginate.js';
+import previousButton from '../../../components/gatoqueue/previousButton.js';
+import nextButton from '../../../components/gatoqueue/nextButton.js';
+import refreshButton from '../../../components/gatoqueue/refreshButton.js';
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
 /** @param {Subcommand} subcommand */
-const gatoListData = (subcommand) => {
+export const gatoListData = (subcommand) => {
     return subcommand.setName('list').setDescription('Listado de las playlists guardadas');
 };
 
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const gatoListExecute = async (interaction) => {
+export const gatoListExecute = async (interaction) => {
     const db = useDatabase();
     const client = interaction.client;
     let reply = '';
@@ -74,6 +74,3 @@ const gatoListExecute = async (interaction) => {
         await interaction.reply(reply);
     }
 };
-
-module.exports.gatoListData = gatoListData;
-module.exports.gatoListExecute = gatoListExecute;

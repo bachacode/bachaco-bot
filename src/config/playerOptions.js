@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     leaveOnEmpty: true,
     leaveOnEmptyCooldown: 300_000,
     leaveOnEnd: false,

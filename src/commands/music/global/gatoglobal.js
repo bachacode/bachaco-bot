@@ -1,23 +1,23 @@
-const { SlashCommandBuilder } = require('discord.js');
-const { gatoSaveData, gatoSaveExecute } = require('./gatoadd.subcommand');
-const { gatoListData, gatoListExecute } = require('./gatolist.subcommand');
-const {
+import { SlashCommandBuilder } from 'discord.js';
+import { gatoSaveData, gatoSaveExecute } from './gatoadd.subcommand.js';
+import { gatoListData, gatoListExecute } from './gatolist.subcommand.js';
+import {
     gatoPlayData,
     gatoPlayExecute,
     gatoRandomExecute,
     gatoRandomData
-} = require('./gatoplay.subcommand');
-const { gatoRemoveData, gatoRemoveExecute } = require('./gatoremove.subcommand');
-const { gatoInsertData, gatoInsertExecute } = require('./gatoinsert.subcommand');
-const { gatoFirstExecute, gatoFirstData } = require('./gatofirst.subcommand');
-const { gatoSwapData, gatoSwapExecute } = require('./gatoswap.subcommand');
-const { gatoMoveData, gatoMoveExecute } = require('./gatomove.subcommand');
+} from './gatoplay.subcommand.js';
+import { gatoRemoveData, gatoRemoveExecute } from './gatoremove.subcommand.js';
+import { gatoInsertData, gatoInsertExecute } from './gatoinsert.subcommand.js';
+import { gatoFirstExecute, gatoFirstData } from './gatofirst.subcommand.js';
+import { gatoSwapData, gatoSwapExecute } from './gatoswap.subcommand.js';
+import { gatoMoveData, gatoMoveExecute } from './gatomove.subcommand.js';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 
 /** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
     .setName('gatoglobal')
     .setDescription('Playlist global que todo el mundo puede editar')
     .addSubcommand(gatoSaveData)
@@ -33,7 +33,7 @@ const data = new SlashCommandBuilder()
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const execute = async (interaction) => {
+export const execute = async (interaction) => {
     /*
     eslint indent: [2, 4, {"SwitchCase": 1}]
     */
@@ -68,9 +68,4 @@ const execute = async (interaction) => {
         default:
             await interaction.reply('No se ha encontrado ese subcomando');
     }
-};
-
-module.exports = {
-    data,
-    execute
 };

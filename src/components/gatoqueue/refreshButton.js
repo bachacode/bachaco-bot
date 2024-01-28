@@ -1,4 +1,4 @@
-const { ButtonBuilder, ButtonStyle } = require('discord.js');
+import { ButtonBuilder, ButtonStyle } from 'discord.js';
 
 const refreshButton = () => {
     return new ButtonBuilder()
@@ -7,4 +7,4 @@ const refreshButton = () => {
         .setEmoji('🔄')
         .setStyle(ButtonStyle.Secondary);
 };
-module.exports = refreshButton;
+export default refreshButton;

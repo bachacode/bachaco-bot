@@ -37,7 +37,7 @@ class Replies {
         const lastMessage = this.messages[this.messages.length - 1].content;
         if (this.messages.length >= 3) {
             const lastThree = this.messages.slice(-3);
-            allThreeEqual = lastThree.every((savedMessage) => {
+            allThreeEqual = lastThree.every(() => {
                 if (
                     message.content === lastThree[0].content &&
                     message.content === lastThree[1].content &&
@@ -63,4 +63,4 @@ class Replies {
         this.chainThree(message);
     }
 }
-module.exports = Replies;
+export default Replies;
