@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { useQueue } = require('discord-player');
-const embedOptions = require('../../config/embedOptions');
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { useQueue } from 'discord-player';
+import embedOptions from '../../config/embedOptions.js';
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
     .setName('gatoswap')
     .setDescription('Intercambia las posiciones de dos canciones en la cola.')
     .addNumberOption((option) => {
@@ -20,7 +20,7 @@ const data = new SlashCommandBuilder()
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const execute = async (interaction) => {
+export const execute = async (interaction) => {
     const queue = useQueue(interaction.guild.id);
 
     // Revisa si hay una queue activa.
@@ -62,9 +62,4 @@ const execute = async (interaction) => {
     await interaction.reply({
         embeds
     });
-};
-
-module.exports = {
-    data,
-    execute
 };

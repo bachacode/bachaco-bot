@@ -1,5 +1,5 @@
-const { default: mongoose } = require('mongoose');
-const playlist = require('./models/playlist');
+import mongoose from 'mongoose';
+import playlist from './models/playlist.js';
 
 const url = process.env.DATABASE_URL;
 
@@ -24,8 +24,6 @@ class Database {
     // Other methods and properties here
 }
 
-function useDatabase() {
+export function useDatabase() {
     return Database.getInstance();
 }
-
-module.exports.useDatabase = useDatabase;

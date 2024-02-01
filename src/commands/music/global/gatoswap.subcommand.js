@@ -1,13 +1,13 @@
-const { EmbedBuilder } = require('discord.js');
-const embedOptions = require('../../../config/embedOptions');
-const { useDatabase } = require('../../../classes/Database');
+import { EmbedBuilder } from 'discord.js';
+import embedOptions from '../../../config/embedOptions.js';
+import { useDatabase } from '../../../classes/Database.js';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
 /** @param {Subcommand} subcommand */
-const gatoSwapData = (subcommand) => {
+export const gatoSwapData = (subcommand) => {
     return subcommand
         .setName('swap')
         .setDescription('Intercambia la posición de dos canciones en la playlist global')
@@ -29,7 +29,7 @@ const gatoSwapData = (subcommand) => {
  * @param {ChatInputCommandInteraction} interaction
  * @param {GuildQueue} queue
  */
-const gatoSwapExecute = async (interaction) => {
+export const gatoSwapExecute = async (interaction) => {
     const db = useDatabase();
     let reply;
 
@@ -116,6 +116,3 @@ const gatoSwapExecute = async (interaction) => {
         return await interaction.reply(reply);
     }
 };
-
-module.exports.gatoSwapData = gatoSwapData;
-module.exports.gatoSwapExecute = gatoSwapExecute;

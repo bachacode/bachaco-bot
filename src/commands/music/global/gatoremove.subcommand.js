@@ -1,13 +1,13 @@
-const { EmbedBuilder } = require('discord.js');
-const embedOptions = require('../../../config/embedOptions');
-const { useDatabase } = require('../../../classes/Database');
+import { EmbedBuilder } from 'discord.js';
+import embedOptions from '../../../config/embedOptions.js';
+import { useDatabase } from '../../../classes/Database.js';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
 
 /** @param {Subcommand} subcommand */
-const gatoRemoveData = (subcommand) => {
+export const gatoRemoveData = (subcommand) => {
     return subcommand
         .setName('remove')
         .setDescription('Quita una canción de la playlist global')
@@ -23,7 +23,7 @@ const gatoRemoveData = (subcommand) => {
  * @param {ChatInputCommandInteraction} interaction
  * @param {GuildQueue} queue
  */
-const gatoRemoveExecute = async (interaction) => {
+export const gatoRemoveExecute = async (interaction) => {
     const db = useDatabase();
     let trackNumber = interaction.options.getNumber('position', true) - 1;
     if (trackNumber < 0) return await interaction.reply('La posición tiene que ser 1 o superior');
@@ -50,6 +50,3 @@ const gatoRemoveExecute = async (interaction) => {
         ]
     });
 };
-
-module.exports.gatoRemoveData = gatoRemoveData;
-module.exports.gatoRemoveExecute = gatoRemoveExecute;

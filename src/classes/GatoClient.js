@@ -1,7 +1,17 @@
-const { Client, Collection } = require('discord.js');
-const path = require('path');
-const fs = require('fs');
-const Logger = require('./Logger');
+import { Client, Collection } from 'discord.js';
+import path from 'path';
+import fs from 'fs';
+import Logger from './Logger.js';
+
+/**
+ * A Discord Slash Command
+ *
+ * @typedef {{
+ * data: SlashCommandBuilder,
+ * execute: (interaction: ChatInputCommandInteraction) => Promise<void>
+ * }} SlashCommand
+ */
+
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @typedef {import('discord.js').SlashCommandBuilder} SlashCommandBuilder */
@@ -16,7 +26,7 @@ class GatoClient extends Client {
     constructor(props, root, token) {
         super(props);
 
-        /** @type {Collection<string, import('../types').SlashCommand} */
+        /** @type {Collection<string, SlashCommand} */
         this.commands = new Collection();
         this.vxPrefix = true;
         this.root = root;
@@ -31,16 +41,17 @@ class GatoClient extends Client {
         this.registerCommandsInDirectory(foldersPath);
     }
 
-    registerCommandsInDirectory(directoryPath) {
+    async registerCommandsInDirectory(directoryPath) {
         const items = fs.readdirSync(directoryPath);
         for (const item of items) {
-            const itemPath = path.join(directoryPath, item);
+            let itemPath = path.join(directoryPath, item);
             if (
                 fs.statSync(itemPath).isFile() &&
                 item.endsWith('.js') &&
                 !item.endsWith('.subcommand.js')
             ) {
-                const command = require(itemPath);
+                itemPath = `File:///${itemPath}`;
+                const command = await import(itemPath);
                 if ('data' in command && 'execute' in command) {
                     this.commands.set(command.data.name, command);
                     this.logger.info('Command Loaded: ' + item.split('.')[0]);
@@ -50,17 +61,17 @@ class GatoClient extends Client {
                     );
                 }
             } else if (fs.statSync(itemPath).isDirectory()) {
-                this.registerCommandsInDirectory(itemPath); // Recursive call for subdirectories
+                await this.registerCommandsInDirectory(itemPath); // Recursive call for subdirectories
             }
         }
     }
 
-    setEvents() {
+    async setEvents() {
         const foldersPath = path.join(this.root, 'events', 'client');
         const eventFiles = fs.readdirSync(foldersPath).filter((file) => file.endsWith('.js'));
         for (const file of eventFiles) {
-            const filePath = path.join(foldersPath, file);
-            const event = require(filePath);
+            const filePath = path.join('file:///', foldersPath, file);
+            const event = await import(filePath);
             if ('type' in event && 'once' in event && 'execute' in event) {
                 if (event.once) {
                     this.once(event.type, event.execute);
@@ -81,4 +92,4 @@ class GatoClient extends Client {
     }
 }
 
-module.exports = GatoClient;
+export default GatoClient;

@@ -3,4 +3,4 @@ const funnyReactions = [
     { request: '<:sadcheems:869742943425151087>', response: ':peepopat:941069635812462603>' }
 ];
 
-module.exports = funnyReactions;
+export default funnyReactions;

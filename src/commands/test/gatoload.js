@@ -1,18 +1,18 @@
-const { SlashCommandBuilder } = require('discord.js');
-const path = require('path');
-const fs = require('fs');
+import { SlashCommandBuilder } from 'discord.js';
+import path from 'path';
+import fs from 'fs';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
     .setName('gatoload')
     .setDescription('Actualiza un comando (para testeo)')
     .addStringOption((option) =>
         option.setName('command').setDescription('The command to reload.').setRequired(true)
     );
 
-const getCommandPath = (directoryPath, commandFile) => {
+export const getCommandPath = (directoryPath, commandFile) => {
     const items = fs.readdirSync(directoryPath);
     for (const item of items) {
         const itemPath = path.join(directoryPath, item);
@@ -30,7 +30,7 @@ const getCommandPath = (directoryPath, commandFile) => {
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const execute = async (interaction) => {
+export const execute = async (interaction) => {
     const commandName = interaction.options.getString('command', true).toLowerCase();
     const client = interaction.client;
     const command = client.commands.get(commandName);
@@ -65,9 +65,4 @@ const execute = async (interaction) => {
             ephemeral: true
         });
     }
-};
-
-module.exports = {
-    data,
-    execute
 };

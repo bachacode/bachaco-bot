@@ -17,4 +17,4 @@ const tipsRandom = [
     { request: 'litio', response: '🐒' }
 ];
 
-module.exports = tipsRandom;
+export default tipsRandom;

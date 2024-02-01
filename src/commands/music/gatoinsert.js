@@ -1,10 +1,10 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { useQueue, useMainPlayer } = require('discord-player');
-const embedOptions = require('../../config/embedOptions');
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { useQueue, useMainPlayer } from 'discord-player';
+import embedOptions from '../../config/embedOptions.js';
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
     .setName('gatoinsert')
     .setDescription('Mete una canción a un puesto especifico de la cola.')
     .addStringOption((option) => {
@@ -20,7 +20,7 @@ const data = new SlashCommandBuilder()
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const execute = async (interaction) => {
+export const execute = async (interaction) => {
     const player = useMainPlayer();
     const queue = useQueue(interaction.guild.id);
 
@@ -55,9 +55,4 @@ const execute = async (interaction) => {
                 .setColor(embedOptions.colors.default)
         ]
     });
-};
-
-module.exports = {
-    data,
-    execute
 };

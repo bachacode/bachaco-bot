@@ -1,13 +1,13 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { useMainPlayer, useQueue } = require('discord-player');
-const getQueryData = require('../../helpers/getQueryData');
-const playerOptions = require('../../config/playerOptions');
-const embedOptions = require('../../config/embedOptions');
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+import { useMainPlayer, useQueue } from 'discord-player';
+import getQueryData from '../../helpers/getQueryData.js';
+import playerOptions from '../../config/playerOptions.js';
+import embedOptions from '../../config/embedOptions.js';
 
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 
 /** @type {SlashCommandBuilder} */
-const data = new SlashCommandBuilder()
+export const data = new SlashCommandBuilder()
     .setName('gaplay')
     .setDescription('gatoc reproduce una canción.')
     .addStringOption((option) =>
@@ -17,7 +17,7 @@ const data = new SlashCommandBuilder()
 /**
  * @param {ChatInputCommandInteraction} interaction
  */
-const execute = async (interaction) => {
+export const execute = async (interaction) => {
     const player = useMainPlayer();
 
     // Revisa si el usuario esta conectado a un canal de voz.
@@ -105,9 +105,4 @@ const execute = async (interaction) => {
             ]
         });
     }
-};
-
-module.exports = {
-    data,
-    execute
 };

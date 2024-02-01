@@ -1,8 +1,8 @@
-const { Events } = require('discord.js');
-const funnyMessages = require('../../Replies/FunnyMessages');
-const funnyReactions = require('../../Replies/FunnyReactions');
-const funnyReplies = require('../../Replies/FunnyReplies');
-const Replies = require('../../Replies/Replies');
+import { Events } from 'discord.js';
+import funnyMessages from '../../Replies/FunnyMessages.js';
+import funnyReactions from '../../Replies/FunnyReactions.js';
+import funnyReplies from '../../Replies/FunnyReplies.js';
+import Replies from '../../Replies/Replies.js';
 
 /** @typedef {import('discord.js').Message} Message */
 
@@ -48,7 +48,7 @@ const changeTwitterEmbed = (message) => {
  * @param {Message} message
  * @returns
  */
-const execute = async (message) => {
+export const execute = async (message) => {
     // Return if message was sent by a bot
     if (message.author.bot === true) return;
     // log message
@@ -66,8 +66,5 @@ const execute = async (message) => {
     }
 };
 
-module.exports = {
-    type: Events.MessageCreate,
-    once: false,
-    execute
-};
+export const type = Events.MessageCreate;
+export const once = false;

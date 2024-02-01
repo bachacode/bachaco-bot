@@ -1,6 +1,6 @@
-const colors = require('colors/safe');
-const path = require('path');
-const { createLogger, format, transports } = require('winston');
+import colors from 'colors/safe.js';
+import path from 'path';
+import { createLogger, format, transports } from 'winston';
 const { printf } = format;
 
 class Logger {
@@ -74,4 +74,4 @@ class Logger {
     }
 }
 
-module.exports = Logger;
+export default Logger;

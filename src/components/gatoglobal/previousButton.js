@@ -1,4 +1,4 @@
-const { ButtonBuilder, ButtonStyle } = require('discord.js');
+import { ButtonBuilder, ButtonStyle } from 'discord.js';
 
 const previousButtonGlobal = (disabled) => {
     return new ButtonBuilder()
@@ -8,4 +8,4 @@ const previousButtonGlobal = (disabled) => {
         .setStyle(ButtonStyle.Primary)
         .setDisabled(disabled);
 };
-module.exports = previousButtonGlobal;
+export default previousButtonGlobal;

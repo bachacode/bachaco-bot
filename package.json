@@ -1,14 +1,14 @@
 {
     "name": "bachaco-bot",
     "version": "1.0.0",
-    "main": "src/app.js",
-    "type": "commonjs",
+    "main": "app.js",
+    "type": "module",
     "scripts": {
-        "start": "NODE_ENV=production node src/index.js",
+        "start": "NODE_ENV=production node src/app.js",
         "deploy-commands": "NODE_ENV=production node src/register-commands.js",
         "deploy-commands-dev": "NODE_ENV=development node src/register-commands.js",
         "delete-commands-dev": "NODE_ENV=development node src/delete-commands.js",
-        "dev": "node src/index.js",
+        "dev": "node src/app.js",
         "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
         "format": "prettier --write src/",
         "test": "echo \"Error: no test specified\" && exit 1"
