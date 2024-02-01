@@ -7,10 +7,11 @@ import { EmbedBuilder, Events } from 'discord.js';
 export const execute = async (member) => {
     const channel = member.client.channels.cache.get('603201649099669526');
     const { user } = member;
-    member.roles.add('603340605774626871');
+
+    await member.roles.add('603340605774626871');
 
     if (user.username === 'juanino') {
-        member.roles.add('790794761119203388');
+        await member.roles.add('790794761119203388');
     }
 
     const name = `<@${user.id}>`;
