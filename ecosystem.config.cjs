@@ -2,7 +2,7 @@ module.exports = {
     apps: [
         {
             name: 'gatoc',
-            script: 'src/index.js',
+            script: 'src/app.js',
             watch: ['src'],
             ignore_watch: ['node_modules', '*.log', '\\.git'],
             watch_delay: 1000,
