@@ -22,14 +22,16 @@ const guildId = process.env.GUILD_ID;
 async function registerCommandsRecursive(directoryPath, commands = []) {
     const items = fs.readdirSync(directoryPath);
     for (const item of items) {
-        let itemPath = path.join('file:///', directoryPath, item);
+        let itemPath = path.join(directoryPath, item);
         if (fs.statSync(itemPath).isDirectory()) {
             if (process.env.NODE_ENV === 'production' && item === 'test') {
                 continue;
             }
             await registerCommandsRecursive(itemPath, commands);
         } else if (!item.endsWith('.subcommand.js')) {
-            const command = await import(itemPath);
+            // Convert Windows absolute path to file URL
+            const itemURL = new URL('file:///' + itemPath.replace(/\\/g, '/'));
+            const command = await import(itemURL.href);
             if ('data' in command && 'execute' in command) {
                 commands.push(command.data.toJSON());
             } else {

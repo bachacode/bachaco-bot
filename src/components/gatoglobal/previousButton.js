@@ -4,7 +4,7 @@ const previousButtonGlobal = (disabled) => {
     return new ButtonBuilder()
         .setCustomId('previous-global')
         .setLabel('patra')
-        .setEmoji('<:miau:800244696349802537>')
+        .setEmoji('<:sadcheems:869742943425151087>')
         .setStyle(ButtonStyle.Primary)
         .setDisabled(disabled);
 };

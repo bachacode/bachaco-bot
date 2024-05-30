@@ -1,7 +1,6 @@
 import { EmbedBuilder, ActionRowBuilder } from 'discord.js';
 import embedOptions from '../../../config/embedOptions.js';
 import { useDatabase } from '../../../classes/Database.js';
-import paginate from '../../../helpers/paginate.js';
 import previousButton from '../../../components/gatoglobal/previousButton.js';
 import nextButton from '../../../components/gatoglobal/nextButton.js';
 import refreshButton from '../../../components/gatoglobal/refreshButton.js';
@@ -18,15 +17,15 @@ export const gatoListData = (subcommand) => {
 
 /**
  *
- * @param {Track[]} page
+ * @param {Track[]} tracks
  * @param {Track} currentTrack
  * @param {number} currentPage
  * @returns {string}
  */
-export const getGlobalMessage = (page, currentPage) => {
+export const getGlobalMessage = (tracks, currentPage) => {
     let message = '';
-    page.forEach((track, i) => {
-        const songNumber = i + 1 + currentPage * 10;
+    tracks.forEach((track, i) => {
+        const songNumber = i + 1 + (currentPage - 1) * 10;
         message += `**[${songNumber}]** ${track.title}\n`;
     });
 
@@ -38,26 +37,37 @@ export const getGlobalMessage = (page, currentPage) => {
  */
 export const gatoListExecute = async (interaction) => {
     const db = useDatabase();
-
+    const pageNumber = 1;
+    const pageSize = 10;
     await interaction.deferReply();
 
-    const globalPlaylist = await db.playlist.findOne({ id: 'global' }).catch((err) => {
-        console.log(err);
-        return interaction.editReply('error al buscar la playlist');
-    });
+    const globalPlaylist = await db.playlist
+        .aggregate([
+            { $match: { id: 'global' } },
+            { $limit: 1 },
+            {
+                $project: {
+                    _id: 0,
+                    name: 1,
+                    url: 1,
+                    totalPages: { $ceil: { $divide: [{ $size: '$tracks' }, pageSize] } },
+                    paginatedTracks: { $slice: ['$tracks', (pageNumber - 1) * pageSize, pageSize] }
+                }
+            }
+        ])
+        .catch((err) => {
+            console.log(err);
+            return interaction.editReply('error al buscar la playlist');
+        });
 
-    const tracks = paginate(globalPlaylist.tracks, 10); // Converts the queue into a array of tracks
+    const message = getGlobalMessage(globalPlaylist[0].paginatedTracks, pageNumber);
 
-    const page = tracks.getCurrentPageData();
-
-    const message = getGlobalMessage(page, tracks.currentPage);
-
-    const previous = previousButton(tracks.currentPage === 0);
-    const next = nextButton(tracks.currentPage === tracks.data.length - 1);
+    const previous = previousButton(pageNumber === 1);
+    const next = nextButton(pageNumber === globalPlaylist[0].totalPages);
     const refresh = refreshButton();
     const row = new ActionRowBuilder().addComponents(previous, next, refresh);
 
-    const embedTitle = `Gato Global - Pag. ${tracks.currentPage + 1}`;
+    const embedTitle = `Gato Global - Pag. ${pageNumber}`;
 
     const embed = new EmbedBuilder()
         .setTitle(embedTitle)

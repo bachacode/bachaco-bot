@@ -80,29 +80,38 @@ const handleQueueButtonInteraction = (interaction) => {
  */
 const handleGlobalButtonInteraction = async (interaction) => {
     const db = useDatabase();
-
-    const globalPlaylist = await db.playlist.findOne({ id: 'global' });
-
-    const tracks = paginate(globalPlaylist.tracks, 10); // Converts the queue into a array of tracks
-    const oldPage = interaction.message.embeds[0].title.match(/Pag\. (\d+)/)[1];
+    const oldPage = parseInt(interaction.message.embeds[0].title.match(/Pag\. (\d+)/)[1]);
+    const pageSize = 10;
     let contentMsg = '';
-    // Check direction
+    let pageNumber = oldPage;
     if (interaction.customId === 'previous-global') {
-        tracks.goToPage(oldPage - 1 - 1);
+        pageNumber = oldPage - 1;
     } else if (interaction.customId === 'next-global') {
-        tracks.goToPage(oldPage - 1 + 1);
+        pageNumber = oldPage + 1;
     } else if (interaction.customId === 'refresh-global') {
         contentMsg = '¡Se ha actualizado la cola!';
     }
 
-    const page = tracks.getCurrentPageData();
+    const globalPlaylist = await db.playlist.aggregate([
+        { $match: { id: 'global' } },
+        { $limit: 1 },
+        {
+            $project: {
+                _id: 0,
+                name: 1,
+                url: 1,
+                totalPages: { $ceil: { $divide: [{ $size: '$tracks' }, pageSize] } },
+                paginatedTracks: { $slice: ['$tracks', (pageNumber - 1) * pageSize, pageSize] }
+            }
+        }
+    ]);
 
-    const message = getGlobalMessage(page, tracks.currentPage);
+    const message = getGlobalMessage(globalPlaylist[0].paginatedTracks, pageNumber);
 
-    const embedTitle = `Gato Global - Pag. ${tracks.currentPage + 1}`;
+    const embedTitle = `Gato Global - Pag. ${pageNumber}`;
 
-    const previous = previousButtonGlobal(tracks.currentPage === 0);
-    const next = nextButtonGlobal(tracks.currentPage === tracks.data.length - 1);
+    const previous = previousButtonGlobal(pageNumber === 1);
+    const next = nextButtonGlobal(pageNumber === globalPlaylist[0].totalPages);
     const refresh = refreshButtonGlobal();
     const row = new ActionRowBuilder().addComponents(previous, next, refresh);
 
