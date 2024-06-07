@@ -1,9 +1,11 @@
 import { EmbedBuilder, ActionRowBuilder } from 'discord.js';
 import embedOptions from '../../../config/embedOptions.js';
 import { useDatabase } from '../../../classes/Database.js';
-import previousButton from '../../../components/gatoglobal/previousButton.js';
-import nextButton from '../../../components/gatoglobal/nextButton.js';
 import refreshButton from '../../../components/gatoglobal/refreshButton.js';
+import fullPreviousButtonGlobal from '../../../components/gatoglobal/fullPreviousButton.js';
+import nextButtonGlobal from '../../../components/gatoglobal/nextButton.js';
+import previousButtonGlobal from '../../../components/gatoglobal/previousButton.js';
+import fullNextButtonGlobal from '../../../components/gatoglobal/fullNextButton.js';
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 /** @typedef {import('discord.js').SlashCommandSubcommandBuilder} Subcommand */
@@ -12,7 +14,10 @@ import refreshButton from '../../../components/gatoglobal/refreshButton.js';
 export const gatoListData = (subcommand) => {
     return subcommand
         .setName('list')
-        .setDescription('Listado de las canciones guardadas en la playlist global');
+        .setDescription('Listado de las canciones guardadas en la playlist global')
+        .addNumberOption((option) => {
+            return option.setName('page').setDescription('Página de playlist').setRequired(false);
+        });
 };
 
 /**
@@ -37,9 +42,30 @@ export const getGlobalMessage = (tracks, currentPage) => {
  */
 export const gatoListExecute = async (interaction) => {
     const db = useDatabase();
-    const pageNumber = 1;
+    const pageNumber = interaction.options.getNumber('page', false) ?? 1;
     const pageSize = 10;
+
     await interaction.deferReply();
+
+    const playlistInfo = await db.playlist
+        .aggregate([
+            { $match: { id: 'global' } },
+            { $limit: 1 },
+            { $project: { _id: 0, totalTracks: { $size: '$tracks' } } }
+        ])
+        .catch((err) => {
+            console.log(err);
+            return interaction.editReply('Error al buscar la playlist');
+        });
+
+    const totalPages = Math.ceil(playlistInfo[0].totalTracks / pageSize);
+
+    // Check if the page number is within the valid range
+    if (pageNumber < 1 || pageNumber > totalPages) {
+        return interaction.editReply(
+            `Número de página inválido. Por favor, elija un número de página entre 1 y ${totalPages}.`
+        );
+    }
 
     const globalPlaylist = await db.playlist
         .aggregate([
@@ -62,17 +88,26 @@ export const gatoListExecute = async (interaction) => {
 
     const message = getGlobalMessage(globalPlaylist[0].paginatedTracks, pageNumber);
 
-    const previous = previousButton(pageNumber === 1);
-    const next = nextButton(pageNumber === globalPlaylist[0].totalPages);
+    const fullPrevious = fullPreviousButtonGlobal(pageNumber === 1);
+    const previous = previousButtonGlobal(pageNumber === 1);
+    const next = nextButtonGlobal(pageNumber === globalPlaylist[0].totalPages);
+    const fullNext = fullNextButtonGlobal(pageNumber === globalPlaylist[0].totalPages);
     const refresh = refreshButton();
-    const row = new ActionRowBuilder().addComponents(previous, next, refresh);
-
-    const embedTitle = `Gato Global - Pag. ${pageNumber}`;
+    const row = new ActionRowBuilder().addComponents(
+        fullPrevious,
+        previous,
+        next,
+        fullNext,
+        refresh
+    );
 
     const embed = new EmbedBuilder()
-        .setTitle(embedTitle)
+        .setTitle(`Playlist - ${globalPlaylist[0].name}`)
         .setDescription(message)
-        .setColor(embedOptions.colors.default);
+        .setColor(embedOptions.colors.default)
+        .setFooter({
+            text: `Pág. ${pageNumber} de ${totalPages} | Canciones totales: ${playlistInfo[0].totalTracks}`
+        });
 
     await interaction.editReply({
         embeds: [embed],

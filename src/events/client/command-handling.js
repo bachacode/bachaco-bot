@@ -13,6 +13,10 @@ import { getGlobalMessage } from '../../commands/music/global/gatolist.subcomman
 import previousButtonGlobal from '../../components/gatoglobal/previousButton.js';
 import nextButtonGlobal from '../../components/gatoglobal/nextButton.js';
 import refreshButtonGlobal from '../../components/gatoglobal/refreshButton.js';
+import fullPreviousButtonGlobal from '../../components/gatoglobal/fullPreviousButton.js';
+import fullNextButtonGlobal from '../../components/gatoglobal/fullNextButton.js';
+import fullPreviousButton from '../../components/gatoqueue/fullPreviousButton.js';
+import fullNextButton from '../../components/gatoqueue/fullNextButton.js';
 
 /**
  * A Discord Slash Command
@@ -39,35 +43,51 @@ const handleQueueButtonInteraction = (interaction) => {
 
     const currentTrack = queue.currentTrack;
     const tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
-    const oldPage = interaction.message.embeds[0].title.match(/Pag\. (\d+)/)[1];
+    const oldPage = interaction.message.embeds[0].footer.text.match(/Pág\. (\d+)/)[1];
+    const maxPage = parseInt(interaction.message.embeds[0].footer.text.match(/de (\d+)/)[1]);
     let contentMsg = '';
     // Check direction
     if (interaction.customId === 'previous') {
         tracks.goToPage(oldPage - 1 - 1);
     } else if (interaction.customId === 'next') {
         tracks.goToPage(oldPage - 1 + 1);
+    } else if (interaction.customId === 'full-previous') {
+        tracks.goToPage(0);
+    } else if (interaction.customId === 'full-next') {
+        tracks.goToPage(maxPage - 1);
     } else if (interaction.customId === 'refresh') {
         contentMsg = '¡Se ha actualizado la cola!';
     }
 
     const page = tracks.getCurrentPageData();
-
+    const totalTracks = tracks.data.reduce((sum, currentArray) => sum + currentArray.length, 0);
     const message = getQueueMessage(page, currentTrack, tracks.currentPage);
 
-    const embedTitle = `Gato Cola - Pag. ${tracks.currentPage + 1}`;
-
+    const fullPrevious = fullPreviousButton(tracks.currentPage === 0);
     const previous = previousButton(tracks.currentPage === 0);
     const next = nextButton(tracks.currentPage === tracks.data.length - 1);
+    const fullNext = fullNextButton(tracks.currentPage === tracks.data.length - 1);
     const refresh = refreshButton();
-    const row = new ActionRowBuilder().addComponents(previous, next, refresh);
+    const row = new ActionRowBuilder().addComponents(
+        fullPrevious,
+        previous,
+        next,
+        fullNext,
+        refresh
+    );
 
     return interaction.update({
         content: contentMsg,
         embeds: [
             new EmbedBuilder()
-                .setTitle(embedTitle)
+                .setTitle('Gato Cola')
                 .setDescription(message)
                 .setColor(embedOptions.colors.default)
+                .setFooter({
+                    text: `Pág. ${tracks.currentPage + 1} de ${
+                        tracks.data.length
+                    } | Canciones totales: ${totalTracks}`
+                })
         ],
         components: [row]
     });
@@ -80,14 +100,20 @@ const handleQueueButtonInteraction = (interaction) => {
  */
 const handleGlobalButtonInteraction = async (interaction) => {
     const db = useDatabase();
-    const oldPage = parseInt(interaction.message.embeds[0].title.match(/Pag\. (\d+)/)[1]);
+    const oldPage = parseInt(interaction.message.embeds[0].footer.text.match(/Pág\. (\d+)/)[1]);
+    const maxPage = parseInt(interaction.message.embeds[0].footer.text.match(/de (\d+)/)[1]);
     const pageSize = 10;
     let contentMsg = '';
     let pageNumber = oldPage;
+
     if (interaction.customId === 'previous-global') {
         pageNumber = oldPage - 1;
     } else if (interaction.customId === 'next-global') {
         pageNumber = oldPage + 1;
+    } else if (interaction.customId === 'full-previous-global') {
+        pageNumber = 1;
+    } else if (interaction.customId === 'full-next-global') {
+        pageNumber = maxPage;
     } else if (interaction.customId === 'refresh-global') {
         contentMsg = '¡Se ha actualizado la cola!';
     }
@@ -100,6 +126,7 @@ const handleGlobalButtonInteraction = async (interaction) => {
                 _id: 0,
                 name: 1,
                 url: 1,
+                totalTracks: { $size: '$tracks' },
                 totalPages: { $ceil: { $divide: [{ $size: '$tracks' }, pageSize] } },
                 paginatedTracks: { $slice: ['$tracks', (pageNumber - 1) * pageSize, pageSize] }
             }
@@ -108,20 +135,29 @@ const handleGlobalButtonInteraction = async (interaction) => {
 
     const message = getGlobalMessage(globalPlaylist[0].paginatedTracks, pageNumber);
 
-    const embedTitle = `Gato Global - Pag. ${pageNumber}`;
-
+    const fullPrevious = fullPreviousButtonGlobal(pageNumber === 1);
     const previous = previousButtonGlobal(pageNumber === 1);
     const next = nextButtonGlobal(pageNumber === globalPlaylist[0].totalPages);
+    const fullNext = fullNextButtonGlobal(pageNumber === globalPlaylist[0].totalPages);
     const refresh = refreshButtonGlobal();
-    const row = new ActionRowBuilder().addComponents(previous, next, refresh);
+    const row = new ActionRowBuilder().addComponents(
+        fullPrevious,
+        previous,
+        next,
+        fullNext,
+        refresh
+    );
 
     return interaction.update({
         content: contentMsg,
         embeds: [
             new EmbedBuilder()
-                .setTitle(embedTitle)
+                .setTitle(`Playlist - ${globalPlaylist[0].name}`)
                 .setDescription(message)
                 .setColor(embedOptions.colors.default)
+                .setFooter({
+                    text: `Pág. ${pageNumber} de ${globalPlaylist[0].totalPages} | Canciones totales: ${globalPlaylist[0].totalTracks}`
+                })
         ],
         components: [row]
     });
@@ -169,13 +205,17 @@ export const execute = async (interaction) => {
         if (
             interaction.customId === 'previous' ||
             interaction.customId === 'next' ||
-            interaction.customId === 'refresh'
+            interaction.customId === 'refresh' ||
+            interaction.customId === 'full-previous' ||
+            interaction.customId === 'full-next'
         ) {
             handleQueueButtonInteraction(interaction);
         } else if (
             interaction.customId === 'previous-global' ||
             interaction.customId === 'next-global' ||
-            interaction.customId === 'refresh-global'
+            interaction.customId === 'refresh-global' ||
+            interaction.customId === 'full-previous-global' ||
+            interaction.customId === 'full-next-global'
         ) {
             await handleGlobalButtonInteraction(interaction);
         }
