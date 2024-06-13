@@ -4,20 +4,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-let token, clientId;
+const token = process.env.NODE_ENV === 'production' ? process.env.TOKEN : process.env.TOKEN_TEST;
+const clientId =
+    process.env.NODE_ENV === 'production' ? process.env.CLIENT_ID : process.env.CLIENT_ID_TEST;
+const guildId = process.env.GUILD_ID_TEST;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-if (process.env.NODE_ENV === 'production') {
-    token = process.env.TOKEN;
-    clientId = process.env.CLIENT_ID;
-} else {
-    token = process.env.TOKEN_TEST;
-    clientId = process.env.CLIENT_ID_TEST;
-}
-
-const guildId = process.env.GUILD_ID;
 
 async function registerCommandsRecursive(directoryPath, commands = []) {
     const items = fs.readdirSync(directoryPath);
@@ -52,12 +45,17 @@ registerCommandsRecursive(path.join(__dirname, 'commands')).then(async (commands
     const rest = new REST().setToken(token);
     try {
         console.log(`Started refreshing ${commands.length} application (/) commands.`);
-
-        // The put method is used to fully refresh all commands in the guild with the current set
-        const data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
-            body: commands
-        });
-
+        let data = '';
+        if (process.env.NODE_ENV === 'production') {
+            // The put method is used to fully refresh all commands in the guild with the current set
+            data = await rest.put(Routes.applicationCommands(clientId), {
+                body: commands
+            });
+        } else {
+            data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
+                body: commands
+            });
+        }
         console.log(`Successfully reloaded ${data.length} application (/) commands.`);
     } catch (error) {
         // And of course, make sure you catch and log any errors!
