@@ -10,9 +10,8 @@
         "deploy-commands-dev": "NODE_ENV=development node src/register-commands.js",
         "delete-commands-dev": "NODE_ENV=development node src/delete-commands.js",
         "dev": "node src/app.js",
-        "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-        "format": "prettier --write src/",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "lint": "eslint src/ --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
+        "format": "prettier --write src/"
     },
     "repository": {
         "type": "git",
@@ -39,18 +38,6 @@
         "youtube-ext": "^1.1.16"
     },
     "devDependencies": {
-        "@types/node": "^20.3.1",
-        "bson": "^6.7.0",
-        "eslint": "^8.42.0",
-        "eslint-config-standard": "^17.1.0",
-        "eslint-plugin-import": "^2.27.5",
-        "eslint-plugin-n": "^16.0.0",
-        "eslint-plugin-promise": "^6.1.1",
-        "prettier": "2.8.8",
-        "turbo": "^2.0.4"
-    },
-    "packageManager": "npm@9.4.0",
-    "engines": {
-        "node": ">=18"
+        "@repo/eslint-config": "*"
     }
 }

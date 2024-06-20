@@ -1,6 +1,6 @@
 {
     "private": true,
-    "name": "bachaco-discord",
+    "name": "bachaco-repo",
     "version": "1.0.0",
     "scripts": {
         "build": "turbo run build",
@@ -12,7 +12,8 @@
         "url": "git+https://github.com/bachacode/bachaco-bot.git"
     },
     "devDependencies": {
-        "turbo": "latest"
+        "turbo": "latest",
+        "prettier": "2.8.8"
     },
     "packageManager": "npm@9.4.0",
     "engines": {

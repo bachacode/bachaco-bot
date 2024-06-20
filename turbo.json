@@ -7,6 +7,17 @@
         "dev": {
             "persistent": true,
             "cache": false
-        }
-    }
+        },
+        "lint": {}
+    },
+    "globalDependencies": [".env"],
+    "globalEnv": [
+        "NODE_ENV",
+        "TOKEN",
+        "TOKEN_TEST",
+        "DATABASE_URL",
+        "CLIENT_ID",
+        "CLIENT_ID_TEST",
+        "GUILD_ID_TEST"
+    ]
 }
