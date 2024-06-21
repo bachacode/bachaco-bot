@@ -47,16 +47,11 @@ export const gatoListExecute = async (interaction) => {
 
     await interaction.deferReply();
 
-    const playlistInfo = await db.playlist
-        .aggregate([
-            { $match: { id: 'global' } },
-            { $limit: 1 },
-            { $project: { _id: 0, totalTracks: { $size: '$tracks' } } }
-        ])
-        .catch((err) => {
-            console.log(err);
-            return interaction.editReply('Error al buscar la playlist');
-        });
+    const playlistInfo = await db.playlist.aggregate([
+        { $match: { id: 'global' } },
+        { $limit: 1 },
+        { $project: { _id: 0, totalTracks: { $size: '$tracks' } } }
+    ]);
 
     const totalPages = Math.ceil(playlistInfo[0].totalTracks / pageSize);
 
@@ -67,24 +62,19 @@ export const gatoListExecute = async (interaction) => {
         );
     }
 
-    const globalPlaylist = await db.playlist
-        .aggregate([
-            { $match: { id: 'global' } },
-            { $limit: 1 },
-            {
-                $project: {
-                    _id: 0,
-                    name: 1,
-                    url: 1,
-                    totalPages: { $ceil: { $divide: [{ $size: '$tracks' }, pageSize] } },
-                    paginatedTracks: { $slice: ['$tracks', (pageNumber - 1) * pageSize, pageSize] }
-                }
+    const globalPlaylist = await db.playlist.aggregate([
+        { $match: { id: 'global' } },
+        { $limit: 1 },
+        {
+            $project: {
+                _id: 0,
+                name: 1,
+                url: 1,
+                totalPages: { $ceil: { $divide: [{ $size: '$tracks' }, pageSize] } },
+                paginatedTracks: { $slice: ['$tracks', (pageNumber - 1) * pageSize, pageSize] }
             }
-        ])
-        .catch((err) => {
-            console.log(err);
-            return interaction.editReply('error al buscar la playlist');
-        });
+        }
+    ]);
 
     const message = getGlobalMessage(globalPlaylist[0].paginatedTracks, pageNumber);
 

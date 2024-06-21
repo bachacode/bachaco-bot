@@ -51,8 +51,6 @@ const changeTwitterEmbed = (message) => {
 export const execute = async (message) => {
     // Return if message was sent by a bot
     if (message.author.bot === true) return;
-    // log message
-    console.log(`${message.author.username}: ${message.content}`);
 
     // Push message to an array with the last 3 messages
     replies.messages.push({ content: message.content, user: message.author.username });

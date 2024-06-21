@@ -83,7 +83,7 @@ export const gatoMoveExecute = async (interaction) => {
             ]
         };
     } catch (error) {
-        console.log(error);
+        interaction.client.logger.error(error);
         reply = {
             embeds: [
                 new EmbedBuilder()

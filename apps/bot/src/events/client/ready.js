@@ -6,7 +6,7 @@ import { Events } from 'discord.js';
  * @param {Client} c
  */
 export const execute = (c) => {
-    console.log(`¡Listo! Logeado como ${c.user.tag}`);
+    c.logger.info(`¡Listo! Logeado como ${c.user.tag}`);
 };
 
 export const type = Events.ClientReady;

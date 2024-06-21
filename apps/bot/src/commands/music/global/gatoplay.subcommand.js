@@ -136,7 +136,7 @@ export const gatoPlayExecute = async (interaction) => {
             ]
         });
     } catch (error) {
-        console.log(error);
+        interaction.client.logger.error(error);
         await interaction.editReply({
             embeds: [
                 new EmbedBuilder()
@@ -193,7 +193,7 @@ export const gatoRandomExecute = async (interaction) => {
             ]
         });
     } catch (error) {
-        console.log(error);
+        interaction.client.logger.error(error);
         await interaction.editReply({
             embeds: [
                 new EmbedBuilder()

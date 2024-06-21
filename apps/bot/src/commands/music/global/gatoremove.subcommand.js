@@ -29,10 +29,7 @@ export const gatoRemoveExecute = async (interaction) => {
     if (trackNumber < 0) return await interaction.reply('La posición tiene que ser 1 o superior');
     await interaction.deferReply();
 
-    const globalPlaylist = await db.playlist.findOne({ id: 'global' }).catch((err) => {
-        console.log(err);
-        return interaction.editReply('error al buscar la playlist');
-    });
+    const globalPlaylist = await db.playlist.findOne({ id: 'global' });
 
     if (trackNumber >= globalPlaylist.tracks.length) {
         trackNumber = globalPlaylist.tracks.length - 1;
