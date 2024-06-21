@@ -1,7 +1,6 @@
 import { Client, Collection } from 'discord.js';
 import path from 'path';
 import fs from 'fs';
-import Logger from './Logger.js';
 
 /**
  * A Discord Slash Command
@@ -23,7 +22,7 @@ class GatoClient extends Client {
      * Create the music client
      * @param {import("discord.js").ClientOptions} props - Client options
      */
-    constructor(props, root, token) {
+    constructor(props, root, token, logger) {
         super(props);
 
         /** @type {Collection<string, SlashCommand} */
@@ -31,7 +30,9 @@ class GatoClient extends Client {
         this.vxPrefix = true;
         this.root = root;
         this.token = token;
-        this.logger = new Logger(root);
+        /** @type {import("winston").winston.Logger} */
+        this.logger = logger;
+        this.logger.warn;
         this.setCommands();
         this.setEvents();
     }

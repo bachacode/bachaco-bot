@@ -34,7 +34,7 @@
         "moment": "^2.29.4",
         "mongoose": "^8.1.0",
         "needle": "^3.2.0",
-        "winston": "^3.11.0",
+        "@repo/logger": "*",
         "youtube-ext": "^1.1.16"
     },
     "devDependencies": {
