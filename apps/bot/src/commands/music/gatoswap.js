@@ -24,7 +24,7 @@ export const execute = async (interaction) => {
     const queue = useQueue(interaction.guild.id);
 
     // Revisa si hay una queue activa.
-    if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    if (!queue) return await interaction.reply('No hay nada sonando elmio.');
 
     const first = interaction.options.getNumber('first', true);
     const second = interaction.options.getNumber('second', true);
@@ -33,11 +33,11 @@ export const execute = async (interaction) => {
     const queueLength = queue.tracks.toArray().length;
 
     if (first <= 0 || second <= 0) {
-        return interaction.reply(
+        return await interaction.reply(
             `No hay ninguna canción en la posicion ${first} o ${second} de la cola`
         );
     } else if (first === second) {
-        return interaction.reply('No puedes intercambiar una canción consigo misma');
+        return await interaction.reply('No puedes intercambiar una canción consigo misma');
     }
 
     if (second >= queueLength) {

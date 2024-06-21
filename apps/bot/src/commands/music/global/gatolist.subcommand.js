@@ -57,7 +57,7 @@ export const gatoListExecute = async (interaction) => {
 
     // Check if the page number is within the valid range
     if (pageNumber < 1 || pageNumber > totalPages) {
-        return interaction.editReply(
+        return await interaction.editReply(
             `Número de página inválido. Por favor, elija un número de página entre 1 y ${totalPages}.`
         );
     }

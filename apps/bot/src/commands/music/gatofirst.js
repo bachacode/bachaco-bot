@@ -22,7 +22,7 @@ export const execute = async (interaction) => {
     const queue = useQueue(interaction.guild.id);
 
     // Revisa si hay una queue activa.
-    if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    if (!queue) return await interaction.reply('No hay nada sonando elmio.');
 
     const query = interaction.options.getString('song', true);
     let searchResult = '';
@@ -39,9 +39,9 @@ export const execute = async (interaction) => {
                 : queue.tracks.toArray().length - 1;
 
         if (position < 0) {
-            return interaction.editReply('La posición no puede ser igual o menor a 0');
+            return await interaction.editReply('La posición no puede ser igual o menor a 0');
         } else if (position === 0) {
-            return interaction.editReply(
+            return await interaction.editReply(
                 'Como vas a poner la primera canción de primera tonto aweonao'
             );
         }

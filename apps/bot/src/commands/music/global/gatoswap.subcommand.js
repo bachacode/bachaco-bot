@@ -38,9 +38,9 @@ export const gatoSwapExecute = async (interaction) => {
     let second = interaction.options.getNumber('second', true) - 1;
 
     if (first < 0 || second < 0) {
-        return interaction.reply('Las posiciones dadas tienen que ser mayor 0');
+        return await interaction.reply('Las posiciones dadas tienen que ser mayor 0');
     } else if (first === second) {
-        return interaction.reply('No puedes intercambiar una canción consigo misma');
+        return await interaction.reply('No puedes intercambiar una canción consigo misma');
     }
 
     await interaction.deferReply();

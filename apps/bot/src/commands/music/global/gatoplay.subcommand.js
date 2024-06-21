@@ -46,13 +46,13 @@ const getPlaylist = async (interaction, position, channel) => {
     const db = useDatabase();
 
     // Revisa si el usuario esta conectado a un canal de voz.
-    if (!channel) return interaction.reply('No estas conectado a un canal de voz.');
-    if (!channel.joinable) return interaction.reply('No puedo unirme a ese canal de voz.');
+    if (!channel) return await interaction.reply('No estas conectado a un canal de voz.');
+    if (!channel.joinable) return await interaction.reply('No puedo unirme a ese canal de voz.');
 
     // Revisa si ya hay un bot conectado a otro canal.
     const queue = useQueue(interaction.guild.id);
     if (queue && queue.channel !== channel) {
-        return interaction.reply('Ya estoy en otro canal de voz.');
+        return await interaction.reply('Ya estoy en otro canal de voz.');
     }
 
     await interaction.deferReply();
@@ -112,7 +112,7 @@ export const gatoPlayExecute = async (interaction) => {
         const playlist = await getPlaylist(interaction, position, channel);
 
         if (playlist.tracks.length === 0) {
-            return interaction.editReply('La playlist global no tiene canciones.');
+            return await interaction.editReply('La playlist global no tiene canciones.');
         }
 
         await player.play(channel, playlist, {
@@ -167,7 +167,7 @@ export const gatoRandomExecute = async (interaction) => {
         const playlist = await getPlaylist(interaction, position, channel);
 
         if (playlist.tracks.length === 0) {
-            return interaction.editReply('La playlist global no tiene canciones.');
+            return await interaction.editReply('La playlist global no tiene canciones.');
         }
 
         playlist.tracks = shuffle(playlist.tracks);

@@ -22,13 +22,13 @@ export const execute = async (interaction) => {
 
     // Revisa si el usuario esta conectado a un canal de voz.
     const channel = interaction.member.voice.channel;
-    if (!channel) return interaction.reply('No estas conectado a un canal de voz.');
-    if (!channel.joinable) return interaction.reply('No puedo unirme a ese canal de voz.');
+    if (!channel) return await interaction.reply('No estas conectado a un canal de voz.');
+    if (!channel.joinable) return await interaction.reply('No puedo unirme a ese canal de voz.');
 
     // Revisa si ya hay un bot conectado a otro canal.
     const queue = useQueue(interaction.guild.id);
     if (queue && queue.channel !== channel) {
-        return interaction.reply('Ya estoy en otro canal de voz.');
+        return await interaction.reply('Ya estoy en otro canal de voz.');
     }
 
     // Limpia el query
@@ -46,15 +46,17 @@ export const execute = async (interaction) => {
 
     // Guard Statements
     if (!result?.tracks.length && url.includes('?list=')) {
-        return interaction.editReply('¡No se pueden reproducir mix generados por youtube 💀💀💀');
+        return await interaction.editReply(
+            '¡No se pueden reproducir mix generados por youtube 💀💀💀'
+        );
     }
 
     if (result.playlist == null && result.tracks[0].metadata.nsfw) {
-        return interaction.editReply('La canción es NSFW 💀💀💀');
+        return await interaction.editReply('La canción es NSFW 💀💀💀');
     }
 
     if (!result?.tracks.length) {
-        return interaction.editReply('No se encontró la canción 💀💀💀.');
+        return await interaction.editReply('No se encontró la canción 💀💀💀.');
     }
     try {
         await player.play(channel, result, {

@@ -51,13 +51,13 @@ export const gatoFirstExecute = async (interaction) => {
         }
 
         if (result.tracks[0].metadata.nsfw) {
-            return interaction.editReply('No se pueden guardar canciones NSFW 💀💀💀');
+            return await interaction.editReply('No se pueden guardar canciones NSFW 💀💀💀');
         }
 
         const track = serialize(result.tracks[0]);
 
         if (globalPlaylist.tracks.some((zoltraack) => zoltraack.url === track.url)) {
-            return interaction.editReply('Esa canción ya existe en la playlist global');
+            return await interaction.editReply('Esa canción ya existe en la playlist global');
         }
 
         globalPlaylist.tracks.splice(0, 0, track);

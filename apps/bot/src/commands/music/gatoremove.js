@@ -19,7 +19,7 @@ export const data = new SlashCommandBuilder()
 export const execute = async (interaction) => {
     // Revisa si hay una queue activa.
     const queue = useQueue(interaction.guild.id);
-    if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    if (!queue) return await interaction.reply('No hay nada sonando elmio.');
     const trackNumber = interaction.options.getNumber('position', true) - 1;
     const track = queue.tracks.toArray()[trackNumber];
     queue.removeTrack(trackNumber);

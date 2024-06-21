@@ -17,7 +17,7 @@ export const execute = async (interaction) => {
 
     const embed = new EmbedBuilder();
 
-    if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    if (!queue) return await interaction.reply('No hay nada sonando elmio.');
 
     await interaction.deferReply();
     // Pausa o reanuda la cola

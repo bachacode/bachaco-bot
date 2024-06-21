@@ -52,7 +52,7 @@ export const gatoSaveExecute = async (interaction) => {
         }
 
         if (result.tracks[0].metadata.nsfw) {
-            return interaction.editReply('No se pueden guardar canciones NSFW 💀💀💀');
+            return await interaction.editReply('No se pueden guardar canciones NSFW 💀💀💀');
         }
 
         const total = globalPlaylist.tracks.length;
@@ -60,14 +60,14 @@ export const gatoSaveExecute = async (interaction) => {
         const track = serialize(result.tracks[0]);
 
         if (globalPlaylist.tracks.some((zoltraack) => zoltraack.url === track.url)) {
-            return interaction.editReply('Esa canción ya existe en la playlist global');
+            return await interaction.editReply('Esa canción ya existe en la playlist global');
         }
 
         globalPlaylist.tracks.push(track);
         await globalPlaylist.save();
 
         if (queue && queue.isPlaying) {
-            player.play(queue.channel, result.tracks[0], {
+            await player.play(queue.channel, result.tracks[0], {
                 nodeOptions: {
                     ...playerOptions,
                     metadata: {

@@ -53,7 +53,6 @@ registerCommandsRecursive(path.join(__dirname, 'commands')).then(async (commands
                 body: commands
             });
         } else {
-            console.log(Routes.applicationGuildCommands(clientId, guildId));
             data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
                 body: commands
             });

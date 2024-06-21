@@ -39,31 +39,31 @@ export const execute = async (interaction) => {
     */
     switch (interaction.options.getSubcommand()) {
         case 'add':
-            gatoSaveExecute(interaction);
+            await gatoSaveExecute(interaction);
             break;
         case 'list':
-            gatoListExecute(interaction);
+            await gatoListExecute(interaction);
             break;
         case 'play':
-            gatoPlayExecute(interaction);
+            await gatoPlayExecute(interaction);
             break;
         case 'remove':
-            gatoRemoveExecute(interaction);
+            await gatoRemoveExecute(interaction);
             break;
         case 'randomlocke':
-            gatoRandomExecute(interaction);
+            await gatoRandomExecute(interaction);
             break;
         case 'insert':
-            gatoInsertExecute(interaction);
+            await gatoInsertExecute(interaction);
             break;
         case 'first':
-            gatoFirstExecute(interaction);
+            await gatoFirstExecute(interaction);
             break;
         case 'swap':
-            gatoSwapExecute(interaction);
+            await gatoSwapExecute(interaction);
             break;
         case 'move':
-            gatoMoveExecute(interaction);
+            await gatoMoveExecute(interaction);
             break;
         default:
             await interaction.reply('No se ha encontrado ese subcomando');

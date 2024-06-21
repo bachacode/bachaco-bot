@@ -24,14 +24,15 @@ export const execute = async (interaction) => {
     const queue = useQueue(interaction.guild.id);
 
     // Revisa si hay una queue activa.
-    if (!queue) return interaction.reply('No hay nada sonando elmio.');
+    if (!queue) return await interaction.reply('No hay nada sonando elmio.');
 
     const old = interaction.options.getNumber('track', true);
     let position = interaction.options.getNumber('new', true);
     const track = queue.tracks.toArray()[old - 1];
     const queueLength = queue.tracks.toArray().length;
 
-    if (position <= 0) return interaction.reply('No puedes insertar una canción en esa posición');
+    if (position <= 0)
+        return await interaction.reply('No puedes insertar una canción en esa posición');
 
     if (position >= queueLength) {
         queue.moveTrack(track, queueLength - 1);
