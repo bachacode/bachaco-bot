@@ -21,7 +21,7 @@ export default function getLogger(logFolderPath = path.join('.', 'logs')) {
     return createLogger({
         format: defaultFileFormat,
         transports: [
-            new transports.File({ filename: errorFile }),
+            new transports.File({ filename: errorFile, level: 'error' }),
             new transports.File({ filename: combinedFile }),
             new transports.Console()
         ]
