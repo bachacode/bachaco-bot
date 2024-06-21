@@ -14,6 +14,7 @@ class GatoPlayer extends Player {
     async setEvents() {
         const foldersPath = path.join(this.root, 'events', 'player');
         const eventFiles = fs.readdirSync(foldersPath).filter((file) => file.endsWith('.js'));
+        const eventsRegistered = [];
         for (const file of eventFiles) {
             const filePath = path.join('file:///', foldersPath, file);
             const event = await import(filePath);
@@ -23,13 +24,15 @@ class GatoPlayer extends Player {
                 } else {
                     this.events.on(event.type, event.execute);
                 }
-                this.logger.info('Player Event Loaded: ' + file.split('.')[0]);
+                eventsRegistered.push(` ${file.split('.')[0]}`);
             } else {
                 this.logger.warn(
                     `The player event at ${filePath} is missing a required "type", "once" or "execute" property.`
                 );
             }
         }
+
+        this.logger.info(`Player events registered: ${eventsRegistered.toString()}`);
     }
 }
 

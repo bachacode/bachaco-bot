@@ -42,14 +42,15 @@ export const getQueueMessage = (page, currentTrack, currentPage) => {
  */
 export const execute = async (interaction) => {
     const queue = useQueue(interaction.guild.id);
-    const pageNumber = interaction.options.getNumber('page', false) ?? 0;
+    const pageNumber = interaction.options.getNumber('page', false) ?? 1;
+
     if (!queue) return interaction.reply('No hay nada sonando elmio.');
     if (queue.tracks.toArray().length === 0) return interaction.reply('No hay canciones en cola');
     // Check if the page number is within the valid range
     const currentTrack = queue.currentTrack;
     const tracks = paginate(queue.tracks.toArray(), 10); // Converts the queue into a array of tracks
     if (pageNumber < 1 || pageNumber > tracks.data.length) {
-        return interaction.editReply(
+        return interaction.reply(
             `Número de página inválido. Por favor, elija un número de página entre 1 y ${tracks.data.length}.`
         );
     }

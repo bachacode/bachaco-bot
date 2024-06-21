@@ -33,13 +33,16 @@ class GatoClient extends Client {
         /** @type {import("winston").winston.Logger} */
         this.logger = logger;
         this.logger.warn;
+        this.commandsRegistered = [];
         this.setCommands();
         this.setEvents();
     }
 
-    setCommands() {
+    async setCommands() {
         const foldersPath = path.join(this.root, 'commands');
-        this.registerCommandsInDirectory(foldersPath);
+        await this.registerCommandsInDirectory(foldersPath);
+
+        this.logger.info(`Client commands registered: ${this.commandsRegistered.toString()}`);
     }
 
     async registerCommandsInDirectory(directoryPath) {
@@ -55,7 +58,7 @@ class GatoClient extends Client {
                 const command = await import(itemPath);
                 if ('data' in command && 'execute' in command) {
                     this.commands.set(command.data.name, command);
-                    this.logger.info('Command Loaded: ' + item.split('.')[0]);
+                    this.commandsRegistered.push(` ${item.split('.')[0]}`);
                 } else {
                     this.logger.warn(
                         `The command at ${itemPath} is missing a required "data" or "execute" property.`
@@ -70,6 +73,7 @@ class GatoClient extends Client {
     async setEvents() {
         const foldersPath = path.join(this.root, 'events', 'client');
         const eventFiles = fs.readdirSync(foldersPath).filter((file) => file.endsWith('.js'));
+        const eventsRegistered = [];
         for (const file of eventFiles) {
             const filePath = path.join('file:///', foldersPath, file);
             const event = await import(filePath);
@@ -79,13 +83,14 @@ class GatoClient extends Client {
                 } else {
                     this.on(event.type, event.execute);
                 }
-                this.logger.info('Client Event Loaded: ' + file.split('.')[0]);
+                eventsRegistered.push(` ${file.split('.')[0]}`);
             } else {
                 this.logger.warn(
                     `The client event at ${filePath} is missing a required "type", "once" or "execute" property.`
                 );
             }
         }
+        this.logger.info(`Client events registered: ${eventsRegistered.toString()}`);
     }
 
     run() {

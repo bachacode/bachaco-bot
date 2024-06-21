@@ -35,11 +35,10 @@ client.run();
 
 // prevent crash on unhandled promise rejection
 process.on('unhandledRejection', (reason) => {
-    // console.log(reason);
-    logger.error(`Unhandled promise rejection:\n${reason}`);
+    logger.error(`Unhandled promise rejection:\n`, reason);
 });
 
 // prevent crash on uncaught exception
 process.on('uncaughtException', (error) => {
-    logger.error(`Uncaught exception:\n${error}`);
+    logger.error(`Uncaught exception:\n`, error);
 });

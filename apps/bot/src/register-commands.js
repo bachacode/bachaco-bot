@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const token = process.env.NODE_ENV === 'production' ? process.env.TOKEN : process.env.TOKEN_TEST;
+
 const clientId =
     process.env.NODE_ENV === 'production' ? process.env.CLIENT_ID : process.env.CLIENT_ID_TEST;
 const guildId = process.env.GUILD_ID_TEST;
@@ -52,6 +53,7 @@ registerCommandsRecursive(path.join(__dirname, 'commands')).then(async (commands
                 body: commands
             });
         } else {
+            console.log(Routes.applicationGuildCommands(clientId, guildId));
             data = await rest.put(Routes.applicationGuildCommands(clientId, guildId), {
                 body: commands
             });
