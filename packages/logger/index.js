@@ -1,5 +1,5 @@
 import path from 'path';
-import { createLogger, format, transports } from 'winston';
+import { createLogger, format, transports, config } from 'winston';
 
 const defaultFileFormat = format.combine(
     format.timestamp({
@@ -19,6 +19,8 @@ export default function getLogger(logFolderPath = path.join('.', 'logs')) {
     const combinedFile = path.join(logFolderPath, 'combined.log');
 
     return createLogger({
+        level: 'debug',
+        levels: config.syslog.levels,
         format: defaultFileFormat,
         transports: [
             new transports.File({ filename: errorFile, level: 'error' }),

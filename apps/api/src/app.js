@@ -20,7 +20,7 @@ const dbUrl = config.databaseUrl;
 mongoose
     .connect(dbUrl)
     .then(() => {
-        logger.info('Mongoose connection done successfully');
+        logger.debug('Mongoose connection done successfully');
     })
     .catch((err) => {
         logger.info('Mongoose connection error');
@@ -30,5 +30,5 @@ mongoose
 app.use('/api/playlists', playlistRoute);
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
+    logger.info(`Example app listening on port ${port}`);
 });
