@@ -1,17 +1,20 @@
 {
     "name": "bachaco-api",
     "version": "1.0.0",
-    "description": "API for the bachaco discord bot",
     "main": "app.js",
+    "type": "module",
     "scripts": {
         "start": "node app.js",
         "dev": "node app.js",
-        "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
+        "lint": "eslint src/ --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "express": "^4.19.2"
+        "dotenv": "^16.4.5",
+        "express": "^4.19.2",
+        "mongoose": "^8.4.3",
+        "@repo/logger": "*"
     },
     "devDependencies": {
         "@repo/eslint-config": "*"
