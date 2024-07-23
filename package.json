@@ -12,12 +12,12 @@
         "url": "git+https://github.com/bachacode/bachaco-bot.git"
     },
     "devDependencies": {
-        "turbo": "latest",
-        "prettier": "2.8.8"
+        "prettier": "2.8.8",
+        "turbo": "latest"
     },
-    "packageManager": "npm@9.4.0",
+    "packageManager": "npm@10.5.2",
     "engines": {
-        "node": ">=18"
+        "node": ">=22"
     },
     "workspaces": [
         "apps/*",

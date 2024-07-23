@@ -16,13 +16,7 @@ const logger = getLogger(path.join(__dirname, '..', 'logs'));
 // Create a new client instance
 const client = new GatoClient(clientOptions, __dirname, token, logger);
 // Create a new player instance
-const player = new GatoPlayer(
-    client,
-    {
-        skipFFmpeg: true
-    },
-    __dirname
-);
+const player = new GatoPlayer(client, {}, __dirname);
 
 if (process.env.NODE_ENV !== 'production') {
     player.on('debug', (message) => logger.info(`[Player] ${message}`));

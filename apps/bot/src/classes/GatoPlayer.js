@@ -1,11 +1,13 @@
 import { Player } from 'discord-player';
 import path from 'path';
 import fs from 'fs';
+import { YoutubeiExtractor } from 'discord-player-youtubei';
 
 class GatoPlayer extends Player {
     constructor(client, options = {}, root) {
         super(client, options);
         this.logger = client.logger;
+        this.extractors.register(YoutubeiExtractor, {});
         this.extractors.loadDefault();
         this.root = root;
         this.setEvents();
@@ -20,9 +22,9 @@ class GatoPlayer extends Player {
             const event = await import(filePath);
             if ('type' in event && 'once' in event && 'execute' in event) {
                 if (event.once) {
-                    this.events.once(event.type, event.execute);
+                    this.events.once(event.type, (...args) => event.execute(...args));
                 } else {
-                    this.events.on(event.type, event.execute);
+                    this.events.on(event.type, (...args) => event.execute(...args));
                 }
                 eventsRegistered.push(` ${file.split('.')[0]}`);
             } else {

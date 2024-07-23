@@ -79,9 +79,9 @@ class GatoClient extends Client {
             const event = await import(filePath);
             if ('type' in event && 'once' in event && 'execute' in event) {
                 if (event.once) {
-                    this.once(event.type, event.execute);
+                    this.once(event.type, (...args) => event.execute(...args));
                 } else {
-                    this.on(event.type, event.execute);
+                    this.on(event.type, (...args) => event.execute(...args));
                 }
                 eventsRegistered.push(` ${file.split('.')[0]}`);
             } else {

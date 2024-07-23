@@ -62,11 +62,7 @@ export const execute = async (interaction) => {
         await player.play(channel, result, {
             nodeOptions: {
                 ...playerOptions,
-                metadata: {
-                    channel: interaction.channel,
-                    client: interaction.guild.members.me,
-                    requestedBy: interaction.user
-                }
+                metadata: interaction
             }
         });
 
