@@ -7,7 +7,11 @@ class GatoPlayer extends Player {
     constructor(client, options = {}, root) {
         super(client, options);
         this.logger = client.logger;
-        this.extractors.register(YoutubeiExtractor, {});
+        this.extractors.register(YoutubeiExtractor, {
+            streamOptions: {
+                useClient: 'ANDROID'
+            }
+        });
         this.extractors.loadDefault();
         this.root = root;
         this.setEvents();
