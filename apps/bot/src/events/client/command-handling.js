@@ -1,7 +1,7 @@
 // const { useMainPlayer, useQueue } = require('discord-player');
 import { useQueue } from 'discord-player';
 
-import { Events, ActionRowBuilder, EmbedBuilder } from 'discord.js';
+import { Events, ActionRowBuilder, EmbedBuilder, AttachmentBuilder } from 'discord.js';
 import paginate from '../../helpers/paginate.js';
 import embedOptions from '../../config/embedOptions.js';
 import previousButton from '../../components/gatoqueue/previousButton.js';
@@ -170,6 +170,18 @@ const handleGlobalButtonInteraction = async (interaction) => {
  */
 export const execute = async (interaction) => {
     if (interaction.isChatInputCommand()) {
+        const rand = Math.random();
+        if (rand <= 0.1) {
+            return interaction.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('Aqua')
+                        .setImage('attachment://viejo-asqueroso.jpeg')
+                ],
+                files: [new AttachmentBuilder('./viejo-asqueroso.jpeg')]
+            });
+        }
+
         const client = interaction.client;
         /**
          * @type {SlashCommand}
