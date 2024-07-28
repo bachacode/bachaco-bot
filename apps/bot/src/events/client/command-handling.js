@@ -171,7 +171,7 @@ const handleGlobalButtonInteraction = async (interaction) => {
 export const execute = async (interaction) => {
     if (interaction.isChatInputCommand()) {
         const rand = Math.random();
-        if (rand <= 0.1) {
+        if (rand <= 0.01) {
             return interaction.reply({
                 embeds: [
                     new EmbedBuilder()
