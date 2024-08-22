@@ -12,7 +12,7 @@ import { gatoInsertData, gatoInsertExecute } from './gatoinsert.subcommand.js';
 import { gatoFirstExecute, gatoFirstData } from './gatofirst.subcommand.js';
 import { gatoSwapData, gatoSwapExecute } from './gatoswap.subcommand.js';
 import { gatoMoveData, gatoMoveExecute } from './gatomove.subcommand.js';
-
+import { gatoDumpData, gatoDumpExecute } from './gatodump.subcommand.js';
 /** @typedef {import('discord.js').ChatInputCommandInteraction} ChatInputCommandInteraction */
 /** @typedef {import('discord-player').GuildQueue} GuildQueue */
 
@@ -28,7 +28,8 @@ export const data = new SlashCommandBuilder()
     .addSubcommand(gatoInsertData)
     .addSubcommand(gatoFirstData)
     .addSubcommand(gatoSwapData)
-    .addSubcommand(gatoMoveData);
+    .addSubcommand(gatoMoveData)
+    .addSubcommand(gatoDumpData);
 
 /**
  * @param {ChatInputCommandInteraction} interaction
@@ -64,6 +65,9 @@ export const execute = async (interaction) => {
             break;
         case 'move':
             await gatoMoveExecute(interaction);
+            break;
+        case 'dump':
+            await gatoDumpExecute(interaction);
             break;
         default:
             await interaction.reply('No se ha encontrado ese subcomando');
